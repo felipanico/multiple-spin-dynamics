@@ -6,12 +6,15 @@ from matplotlib import pyplot as plt
 # global variables
 n = 100
 h = 0.05
-Nx = 2
-Ny = 2
+Nx = 5
+Ny = 5
 H = np.array([0,0,1])
 position = 1.0 / np.sqrt(3.0)
 
 # begin functions
+mx = []
+my = []
+mz = []
 def euler(spin, x, y):
 	result = derivate(spin, Heff(spin,H))
 	spin[0] = spin[0] + h*result[0]
@@ -39,35 +42,55 @@ def Heff(S,H):
 def createSpinLattice():
 	for x in range(Nx):
 		for y in range(Ny):
-			spinLattice[x][y] = [position,position,position]
+			spinLattice[x][y] = [x,y,0]
 	
 	return spinLattice
 
 
-def plot(mx, my, mz):
+def plotM(mx, my, mz):
 	plt.plot(mx, label = 'mx')
 	plt.plot(my, label = 'my')
 	plt.plot(mz, label = 'mz')
 	plt.title('Magnetization')
 	plt.show()
 
+def plotInitialPositions():
+	sx = spinLattice[:,:,0]
+	sy = spinLattice[:,:,1]
+	fig, ax = plt.subplots(figsize=(7,7))
+	width=0.003
+	scale=1.0
+	ax.quiver(sx,sy, pivot='mid',width=width)
+
+	ax.xaxis.set_ticks([])
+	ax.yaxis.set_ticks([])
+	ax.set_aspect('equal')
+	plt.show()
+
+def plotFinalPositions():
+	sx = spinLattice[:,:,0]
+	sy = spinLattice[:,:,1]
+	fig2, bx = plt.subplots(figsize=(7,7))
+	width=0.003
+	scale=1.0
+	bx.quiver(sx,sy, pivot='mid',width=width)
+	bx.xaxis.set_ticks([])
+	bx.yaxis.set_ticks([])
+	bx.set_aspect('equal')
+	plt.show()		
+
 #end functions
 
 #main program
-mx = []
-my = []
-mz = []
-
 spinLattice = np.zeros((Nx+2,Ny+2,3),np.float64)[1:Nx+1,1:Ny+1,:]
 createSpinLattice()
+
+plotInitialPositions()
 
 for t in range(n-1):
 	for x in range(Nx):
 		for y in range(Ny):
 			euler(spinLattice[x][y], x, y)
 
-
-for t in (range(n-1)):
-	print(mx)
-	sys.exit()
-
+plotFinalPositions()
+plotM(mx,my,mz)
