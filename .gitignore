@@ -3,3 +3,4 @@ env/
 graphs/
 data/
 examples/
+__pycache__/
