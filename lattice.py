@@ -11,7 +11,8 @@ def createSpinLattice(n,Nx,Ny,mx,my,mz):
             for y in range(Ny):
                 magx = x*normalization + normalization
                 magy = y*normalization + normalization
-                magz = x+y
+                magz = 0
+                
                 spin = [magx, magy, magz]
                 spinLattice[x][y] = spin
                 

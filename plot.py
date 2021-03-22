@@ -14,8 +14,8 @@ def spins2D(spinLattice):
 	fig, ax = plt.subplots(figsize=(6,6))
 	cmap = plt.get_cmap('coolwarm_r')
 	width = 0.0025
-	zmin = -0.001
-	zmax = 0.001
+	zmin = 0
+	zmax = 10
 	interpolation='nearest'
 
 	x = spinLattice[:,:,0]
@@ -23,10 +23,8 @@ def spins2D(spinLattice):
 	z = spinLattice[:,:,2]
 	x = x / np.sqrt(x**2 + y**2)
 	y = y / np.sqrt(x**2 + y**2)
-	#y = y / np.sqrt(y**2 + y**2)
 	
-
-	im=ax.imshow(z, interpolation=interpolation, cmap = cmap, origin='lower')
+	im=ax.imshow(z, interpolation=interpolation, cmap = cmap, origin='lower', vmin=0,vmax=1)
 	ax.quiver(x, y, pivot='mid', zorder=2, width=width, scale=5.0 ,scale_units='xy', headwidth=6, headlength=8)
 	fig.colorbar(im, label=r'$m_z$',orientation='vertical')
 	

@@ -4,12 +4,11 @@ import plot
 import lattice
 import calc
 
-n = 1000
+n = 2000
 h = 0.05
 Nx = 5
 Ny = 5
 H = np.array([0,0,1])
-position = 1.0 / np.sqrt(3.0)
 
 sx = []
 sy = []
