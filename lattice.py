@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import random
 
 def createSpinLattice(n,Nx,Ny,mx,my,mz):
     spinLattice = np.zeros((Nx+2,Ny+2,3),np.float64)[1:Nx+1,1:Ny+1,:]
@@ -9,11 +10,12 @@ def createSpinLattice(n,Nx,Ny,mx,my,mz):
         u = 0
         for x in range(Nx):
             for y in range(Ny):
-                magx = x*normalization + normalization
-                magy = y*normalization + normalization
-                magz = 0
                 
+                magx = random.uniform(0.01, 0.06)
+                magy = random.uniform(0.01, 0.06) 
+                magz = random.uniform(0.01, 0.06) 
                 spin = [magx, magy, magz]
+                
                 spinLattice[x][y] = spin
                 
                 mx[u][v] = spin[0]
@@ -21,6 +23,11 @@ def createSpinLattice(n,Nx,Ny,mx,my,mz):
                 mz[u][v] = spin[2]
                 
                 u = u+1
+    
+    #print(mx)
+    #print(my)
+    #print(mz)
+    #sys.exit()
     
     return spinLattice
 

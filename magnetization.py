@@ -4,11 +4,11 @@ import plot
 import lattice
 import calc
 
-n = 2000
+n = 1000
 h = 0.05
 Nx = 5
 Ny = 5
-H = np.array([0,0,1])
+H = np.array([0,0,3])
 
 sx = []
 sy = []
@@ -22,7 +22,7 @@ spinLattice = lattice.createSpinLattice(n,Nx,Ny,mx,my,mz)
 
 spinTotal = Nx*Ny
 
-plot.spins2D(spinLattice)
+plot.spins2D(spinLattice, 5.0, 0.01, 0.05)
 
 for t in range(n-1):
 	i = 0
@@ -34,5 +34,5 @@ for t in range(n-1):
 			mz[i][t] = spin[2]
 			i = i+1
 
-plot.spins2D(spinLattice)
+plot.spins2D(spinLattice, 0.005, -1, 1)
 
