@@ -20,19 +20,8 @@ def spins2D(spinLattice, scale, zmin, zmax):
 	y = spinLattice[:,:,1]
 	z = spinLattice[:,:,2]
 
-	normalization = (10)**(-2)
-
-	xNormalized = (x / np.sqrt(x**2 + y**2 + z**2))
-	yNormalized = (y / np.sqrt(x**2 + y**2 + z**2))
-	
-	print('x')
-	print(xNormalized)
-	
-	print('z')
-	print(z)
-
 	im=ax.imshow(z, interpolation=interpolation, cmap = cmap, origin='lower', vmin=zmin, vmax=zmax)
-	ax.quiver(xNormalized, yNormalized, pivot='mid', zorder=2, width=width, scale=scale ,scale_units='xy', headwidth=6, headlength=8)
+	ax.quiver(x, y, pivot='mid', zorder=2, width=width, scale=scale ,scale_units='xy', headwidth=6, headlength=8)
 	fig.colorbar(im, label=r'$m_z$', orientation='vertical')
 	
 	plt.show()

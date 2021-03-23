@@ -3,11 +3,20 @@ import math
 import sys
 
 def euler(H, spinLattice, spin, x, y, h):
+	magx = spin[0]
+	magy = spin[1]
+	magz = spin[2]
+	
+	spin[0] = (magx / np.sqrt(magx**2 + magy**2 + magz**2))
+	spin[1] = (magy / np.sqrt(magx**2 + magy**2 + magz**2))
+	spin[2] = (magz / np.sqrt(magx**2 + magy**2 + magz**2))
+	
 	H = Heff(spin, H)
 	result = derivate(spin, H)
 	spin[0] = spin[0] + h*result[0]
 	spin[1] = spin[1] + h*result[1]
 	spin[2] = spin[2] + h*result[2]
+	
 	spinLattice[x][y] = spin
 	
 	return spin
