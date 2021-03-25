@@ -1,10 +1,22 @@
 import numpy as np
+import math
+import sys
 
 def euler(H, spinLattice, spin, x, y, h):
-	result = derivate(spin, Heff(spin,H))
+	magx = spin[0]
+	magy = spin[1]
+	magz = spin[2]
+	
+	spin[0] = (magx / np.sqrt(magx**2 + magy**2 + magz**2))
+	spin[1] = (magy / np.sqrt(magx**2 + magy**2 + magz**2))
+	spin[2] = (magz / np.sqrt(magx**2 + magy**2 + magz**2))
+	
+	H = Heff(spin, H)
+	result = derivate(spin, H)
 	spin[0] = spin[0] + h*result[0]
 	spin[1] = spin[1] + h*result[1]
 	spin[2] = spin[2] + h*result[2]
+	
 	spinLattice[x][y] = spin
 	
 	return spin
@@ -19,6 +31,5 @@ def derivate(S,H):
 	return giromagneticRatio()*(np.cross(S,H))
 
 def Heff(S,H):
-	lamb = 0.1 #lambda is reserved world
-
-	return np.add(H, lamb * np.cross(S,H))
+	_lambda = 0.1
+	return np.add(H, _lambda * np.cross(S,H))
