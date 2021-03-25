@@ -25,7 +25,7 @@ spinLattice = lattice.createSpinLattice(n,Nx,Ny,mx,my,mz)
 spinTotal = Nx*Ny
 
 plot.spins2D(spinLattice, initialScale, 0.1, 0.5)
-sys.exit()
+
 for t in range(n-1):
 	i = 0
 	for x in range(Nx):
