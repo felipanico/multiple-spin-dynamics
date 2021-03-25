@@ -9,8 +9,8 @@ h = 0.01
 Nx = 5
 Ny = 5
 H = np.array([0,0,10])
-initialScale = 4
-finalScale = 1.8*10**(-6)
+initialScale = 10
+finalScale = 5*10**(-6)
 
 sx = []
 sy = []
@@ -25,7 +25,7 @@ spinLattice = lattice.createSpinLattice(n,Nx,Ny,mx,my,mz)
 spinTotal = Nx*Ny
 
 plot.spins2D(spinLattice, initialScale, 0.1, 0.5)
-
+sys.exit()
 for t in range(n-1):
 	i = 0
 	for x in range(Nx):
