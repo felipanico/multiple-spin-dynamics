@@ -5,11 +5,11 @@ def euler(spin, spinLattice, H, spinTotal, index, mx, my, mz, h, x, y):
 	magx = spin[0]
 	magy = spin[1]
 	magz = spin[2]
-	
+
 	spin[0] = (magx / np.sqrt(magx**2 + magy**2 + magz**2))
 	spin[1] = (magy / np.sqrt(magx**2 + magy**2 + magz**2))
 	spin[2] = (magz / np.sqrt(magx**2 + magy**2 + magz**2))
-	
+
 	H = Heff(spin, spinLattice , H, spinTotal, index, mx, my, mz)
 	result = derivate(spin, H)
 	
@@ -32,16 +32,7 @@ def Heff(S, spinLattice, H, spinTotal, index, mx, my,mz):
 	S[1] = B*S[1]
 	S[2] = C*S[2]
 
-	sx = np.zeros((spinTotal))
-	sy = np.zeros((spinTotal))
-	sz = np.zeros((spinTotal))
-
-	for k in range(spinTotal):
-		sx[k] = mx[k][index-1]
-		sy[k] = my[k][index-1]
-		sz[k] = mz[k][index-1]
-
-	term1 = np.add(exchangeInteraction(sx, sy, sz, index, k), S) 
+	term1 = np.add(exchangeInteraction(index, spinTotal, spinLattice, S), S) 
 	term1 = np.add(term1, H)
 
 	term2 = _lambda * np.cross(term1, S)
@@ -50,32 +41,58 @@ def Heff(S, spinLattice, H, spinTotal, index, mx, my,mz):
 
 	return Heff
 
-def exchangeInteraction(sx, sy, sz, index, spinTotal):
+def exchangeInteraction(index, spinTotal, spinLattice, spin):
 
 	J = 1
-
-	for k in range(spinTotal):
-		isSpinInEdge = 0		
+	Nx = Ny = 3
+	X = Y = 0
+	
+	for x in range(Nx):	
+		for y in range(Ny):
+			
+			S = spinLattice[x][y]
+			
+			if (S[0] == spin[0] and S[1] == spin[1]):
+				X = x
+				Y = y
+				break;
 		
-		if (k == 0):
-			isSpinInEdge = 1
-			previousSpinIndex = spinTotal
-			nextSpinIndex = k+1	
-		
-		if (k == spinTotal):
-			isSpinInEdge = 1
-			nextSpinIndex = 0
-			previousSpinIndex = k-1
+	
+	lineDown = X-1
+	line = X
+	lineUp = X+1
+	
+	columnRight = Y-1
+	column = Y
+	columnLeft = Y+1
 
-		if (isSpinInEdge == 0):
-			previousSpinIndex = k-1	
-			nextSpinIndex = k+1	
+	if (lineDown <= 0):
+		lineDown = Nx -1
 
-		spinInteractionX = sx[previousSpinIndex] + sx[k] + sx[nextSpinIndex]
-		spinInteractionY = sy[previousSpinIndex] + sy[k] + sy[nextSpinIndex]
-		spinInteractionZ = sz[previousSpinIndex] + sz[k] + sz[nextSpinIndex]
-		
-		spinInteraction = [spinInteractionX, spinInteractionY, spinInteractionZ]
+	if (lineDown >= Nx):
+		lineDown = 0
+
+	if (lineUp <= 0):
+		lineUp = Nx - 1 
+
+	if (lineUp >= Nx):
+		lineUp = 0
+
+	if (columnLeft >= Ny ):
+		columnLeft = 0
+
+	if (columnLeft <= 0 ):
+		columnLeft = Ny - 1				    		
+
+	if (columnRight >= Ny):
+		columnRight = 0
+
+	if (columnRight <= 0):
+		columnRight = Ny - 1	
+	
+	spinInteraction = spinLattice[lineDown][columnLeft] + spinLattice[lineDown][column] + spinLattice[lineDown][columnRight]
+	spinInteraction += spinLattice[line][columnLeft] + spinLattice[line][column] + spinLattice[line][columnRight]
+	spinInteraction += spinLattice[lineUp][columnLeft] + spinLattice[lineUp][column] + spinLattice[lineUp][columnRight]
 		
 	return J*spinInteraction
 

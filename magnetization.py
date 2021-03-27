@@ -14,10 +14,10 @@ import calc
 #finalScale = 5*10**(-6)
 
 # Parameters for higher magnetic field
-n = 3000
+n = 1000
 h = 0.01
-Nx = 5
-Ny = 5
+Nx = 40
+Ny = 40
 H = np.array([0,0,10])
 initialScale = 10
 finalScale = 5*10**(-6)
@@ -28,7 +28,6 @@ my = np.zeros((Nx*Ny,n-1))
 mz = np.zeros((Nx*Ny,n-1))
 
 spinLattice = lattice.createSpinLattice(n,Nx,Ny,mx,my,mz)
-
 spinTotal = Nx*Ny
 
 plot.spins2D(spinLattice, initialScale, 0.1, 0.5)
@@ -43,8 +42,6 @@ for t in range(n-1):
 			mz[i][t] = spin[2]
 			i = i+1
 
-print(spinLattice)
-sys.exit()
 plot.spins2D(spinLattice, finalScale, -1, 1)
 plot.spins3D(t, spinTotal, mx, my, mz)
 

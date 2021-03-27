@@ -21,7 +21,7 @@ def spins2D(spinLattice, scale, zmin, zmax):
 	z = spinLattice[:,:,2]
 
 	im=ax.imshow(z, interpolation=interpolation, cmap = cmap, origin='lower', vmin=zmin, vmax=zmax)
-	ax.quiver(x, y, pivot='mid', width=width, scale=scale, scale_units='xy')
+	ax.quiver(x, y, pivot='mid', width=width, scale_units='xy')
 	fig.colorbar(im, label=r'$m_z$', orientation='vertical')
 	
 	plt.show()
