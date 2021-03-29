@@ -9,13 +9,13 @@ def createSpinLattice(n,Nx,Ny,mx,my,mz):
         for y in range(Ny):
             magx = random.uniform(-10, 10)
             magy = random.uniform(-10, 10) 
-            magz = random.uniform(1, 2) 
-            
+            magz = random.uniform(1, 2)
+
             spin = [magx, magy, magz]
 
-            spin[0] = (magx / np.sqrt(magx**2 + magy**2 + magz**2))
-            spin[1] = (magy / np.sqrt(magx**2 + magy**2 + magz**2))
-            spin[2] = (magz / np.sqrt(magx**2 + magy**2 + magz**2))
+            spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+            spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
+            spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
             
             spinLattice[x][y] = spin
     
