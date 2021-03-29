@@ -13,9 +13,9 @@ def createSpinLattice(n,Nx,Ny,mx,my,mz):
             
             spin = [magx, magy, magz]
 
-            spin[0] = (magx / np.sqrt(magx**2 + magy**2 + magz**2))
-            spin[1] = (magy / np.sqrt(magx**2 + magy**2 + magz**2))
-            spin[2] = (magz / np.sqrt(magx**2 + magy**2 + magz**2))
+            spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+            spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
+            spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
             
             spinLattice[x][y] = spin
     

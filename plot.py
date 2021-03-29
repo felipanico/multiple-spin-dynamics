@@ -10,7 +10,7 @@ def individualMagnetization(mx, my, mz):
 	plt.title('Magnetization')
 	plt.show()
 
-def spins2D(spinLattice, scale, zmin, zmax):
+def spins2D(spinLattice, zmin, zmax):
 	fig, ax = plt.subplots(figsize=(6,6))
 	cmap = plt.get_cmap('coolwarm_r')
 	width = 0.0025

@@ -1,50 +1,47 @@
 import numpy as np
+import params
 import sys
 
-def euler(spin, spinLattice, H, spinTotal, index, mx, my, mz, h, x, y):
+def euler(spin, spinLattice, index, x, y):
 	magx = spin[0]
 	magy = spin[1]
 	magz = spin[2]
 
-	spin[0] = (magx / np.sqrt(magx**2 + magy**2 + magz**2))
-	spin[1] = (magy / np.sqrt(magx**2 + magy**2 + magz**2))
-	spin[2] = (magz / np.sqrt(magx**2 + magy**2 + magz**2))
+	spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+	spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
+	spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
-	H = Heff(spin, spinLattice , H, spinTotal, index, mx, my, mz)
-	result = derivate(spin, H)
+	H = Heff(spin, spinLattice, index)
 	
-	spin[0] = spin[0] + h*result[0]
-	spin[1] = spin[1] + h*result[1]
-	spin[2] = spin[2] + h*result[2]
+	result = giromagneticRatio() * np.cross(spin, H)
+	
+	spin[0] = spin[0] + params.h*result[0]
+	spin[1] = spin[1] + params.h*result[1]
+	spin[2] = spin[2] + params.h*result[2]
 	
 	spinLattice[x][y] = spin
 
 	return spin
 	
-def Heff(S, spinLattice, H, spinTotal, index, mx, my,mz):
-	_lambda = 0.1
-	J = 1
+def Heff(spin, spinLattice, index):
+	_lambda = 1
 	A = 1
 	B = 1
 	C = 1
 
-	S[0] = A*S[0]
-	S[1] = B*S[1]
-	S[2] = C*S[2]
+	anisotropyInteraction = A*spin[0] + B*spin[1] + C*spin[2]
 
-	term1 = np.add(exchangeInteraction(index, spinTotal, spinLattice, S), S) 
-	term1 = np.add(term1, H)
+	term1 = np.add(exchangeInteraction(index, spinLattice, spin), anisotropyInteraction) 
+	term1 = np.add(term1, params.H)
 
-	term2 = _lambda * np.cross(term1, S)
+	term2 = np.cross(_lambda *term1, spin)
 
-	Heff = np.add(term1, term2)
+	return np.add(term1, term2)
 
-	return Heff
-
-def exchangeInteraction(index, spinTotal, spinLattice, spin):
-
+def exchangeInteraction(index, spinLattice, spin):
 	J = 1
-	Nx = Ny = 3
+	Nx = params.Nx
+	Ny = params.Ny
 	X = Y = 0
 	
 	for x in range(Nx):	
@@ -103,6 +100,9 @@ def giromagneticRatio():
 
 	return k*u0*(-1) #check the signal
 
-def derivate(S,H):
-	return np.cross(S,H)
+def Heff0(S):
+	_lambda = 0.1
+	H = params.H
+	
+	return np.add(H, _lambda * np.cross(S,H))
 	 
