@@ -25,7 +25,7 @@ for stepIndex in range(n-1):
 	spinIndex = 0
 	for x in range(Nx):
 		for y in range(Ny):
-			spin = calc.euler(spinLattice[x][y], spinLattice, stepIndex, x, y)
+			spin = calc.euler(spinLattice[x][y], spinLattice, x, y)
 			mx[spinIndex][stepIndex] = spin[0]
 			my[spinIndex][stepIndex] = spin[1]
 			mz[spinIndex][stepIndex] = spin[2]

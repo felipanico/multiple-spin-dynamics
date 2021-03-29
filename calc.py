@@ -2,7 +2,7 @@ import numpy as np
 import params
 import sys
 
-def euler(spin, spinLattice, index, x, y):
+def euler(spin, spinLattice, x, y):
 	magx = spin[0]
 	magy = spin[1]
 	magz = spin[2]
@@ -11,7 +11,7 @@ def euler(spin, spinLattice, index, x, y):
 	spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
 	spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
-	H = Heff(spin, spinLattice, index, x, y)
+	H = Heff(spin, spinLattice, x, y)
 	result = np.cross(spin, H)
 	
 	spin[0] = spin[0] + params.h*result[0]
@@ -22,7 +22,7 @@ def euler(spin, spinLattice, index, x, y):
 
 	return spin
 	
-def Heff(spin, spinLattice, index, x, y):
+def Heff(spin, spinLattice, x, y):
 	_lambda = 1
 	A = 1
 	B = 1
@@ -30,12 +30,12 @@ def Heff(spin, spinLattice, index, x, y):
 
 	#anisotropyInteraction = A*spin[0] + B*spin[1] + C*spin[2]
 
-	term1 = np.add(exchangeInteraction(index, spinLattice, spin, x, y), params.H) 
+	term1 = np.add(exchangeInteraction(spinLattice, spin, x, y), params.H) 
 	term2 = np.cross(_lambda * term1, spin)
 
 	return np.add(term1, term2)
 
-def exchangeInteraction(index, spinLattice, spin, X, Y):
+def exchangeInteraction(spinLattice, spin, X, Y):
 	J = 1
 	Nx = params.Nx
 	Ny = params.Ny
