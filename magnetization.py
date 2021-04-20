@@ -30,4 +30,7 @@ for stepIndex in range(n-1):
 			mz[spinIndex][stepIndex] = spin[2]
 			spinIndex = spinIndex + 1
 
+
+print(spinLattice)
 plot.spins2D(spinLattice, spinPositions)
+plot.spins3D(stepIndex, params.spinsTotal, mx, my, mz)

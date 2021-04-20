@@ -34,8 +34,8 @@ def spins2D(spinLattice, spinPositions):
     				
 	sz = sz.reshape(params.spinsNumber, -1)
 	
-	ax.quiver(x, y, sx, sy, linewidth=5)
-	im = ax.imshow(sz, cmap='bwr')
+	ax.quiver(x, y, sx, sy, scale = 2, angles='xy', scale_units='xy')
+	im = ax.imshow(sz, cmap='bwr', vmin=-1, vmax=1)
 	fig.colorbar(im, ax=ax)
 
 	plt.show()
@@ -60,7 +60,7 @@ def spins3D(size, spinTotal, mx, my, mz):
 	for k in range(spinTotal):
 		x[k] = random.uniform(1, 2)
 		y[k] = random.uniform(1, 2)
-		z[k] = random.uniform(1, 2)
+		z[k] = 0
 
 		sx[k] = mx[k][size-1]
 		sy[k] = my[k][size-1]

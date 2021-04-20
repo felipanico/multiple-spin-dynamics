@@ -19,13 +19,13 @@ def createSpinPositions():
     return positions  
 
 def createSpinLattice():
-    spinLattice = np.zeros((params.Nx+2,params.Ny+2,3), np.float64)
+    spinLattice = np.zeros((params.Nx,params.Ny,3), np.float64)
     
     for x in range(params.Nx):
         for y in range(params.Ny):
             magx = random.uniform(-10, 10)
             magy = random.uniform(-10, 10) 
-            magz = random.uniform(1, 2)
+            magz = random.uniform(-1, 1)
 
             spin = [magx, magy, magz]
 
