@@ -1,5 +1,6 @@
 import numpy as np
 import params
+import lattice
 import sys
 
 def euler(spin, spinLattice, x, y):
@@ -23,57 +24,47 @@ def euler(spin, spinLattice, x, y):
 	return spin
 	
 def Heff(spin, spinLattice, x, y):
-	_lambda = 1
-	A = 1
-	B = 1
-	C = 1
+	LAMBDA = params._lambda
 
-	#anisotropyInteraction = A*spin[0] + B*spin[1] + C*spin[2]
+	#term1 = exchangeInteraction(spinLattice, x, y) - dmiInteraction(spinLattice, x, y)
+	term1 = dmInteraction(spinLattice, x, y) + params.H
+	term2 = np.cross(LAMBDA * term1, spin)
 
-	term1 = np.add(exchangeInteraction(spinLattice, spin, x, y), params.H) 
-	term2 = np.cross(_lambda * term1, spin)
+	return term1 + term2
 
-	return np.add(term1, term2)
 
-def exchangeInteraction(spinLattice, spin, X, Y):
-	J = 1
-	Nx = params.Nx
-	Ny = params.Ny
+def exchangeInteraction(spinLattice, X, Y):
+	J = -params.J
+
+	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(X,Y)
+
+	spinInteraction = spinLattice[lineUp][column]
+	spinInteraction += spinLattice[line][columnLeft] + spinLattice[line][columnRight]
+	spinInteraction += spinLattice[lineDown][column]
 	
-	lineDown = X-1
-	line = X
-	lineUp = X+1
-	
-	columnRight = Y-1
-	column = Y
-	columnLeft = Y+1
-
-	if (lineDown <= 0):
-		lineDown = Nx -1
-
-	if (lineDown >= Nx):
-		lineDown = 0
-
-	if (lineUp <= 0):
-		lineUp = Nx - 1 
-
-	if (lineUp >= Nx):
-		lineUp = 0
-
-	if (columnLeft >= Ny ):
-		columnLeft = 0
-
-	if (columnLeft <= 0 ):
-		columnLeft = Ny - 1				    		
-
-	if (columnRight >= Ny):
-		columnRight = 0
-
-	if (columnRight <= 0):
-		columnRight = Ny - 1	
-	
-	spinInteraction = spinLattice[lineDown][columnLeft] + spinLattice[lineDown][column] + spinLattice[lineDown][columnRight]
-	spinInteraction += spinLattice[line][columnLeft] + spinLattice[line][column] + spinLattice[line][columnRight]
-	spinInteraction += spinLattice[lineUp][columnLeft] + spinLattice[lineUp][column] + spinLattice[lineUp][columnRight]
-		
 	return J*spinInteraction
+
+def dmInteraction(spinLattice, X, Y):
+	D = -params.D
+
+	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(X,Y)
+	
+	spinInteraction = spinLattice[lineUp][column]
+	spinInteraction += spinLattice[line][columnLeft] + spinLattice[line][columnRight]
+	spinInteraction += -spinLattice[lineDown][column]
+
+	return D*spinInteraction
+
+def dmInteractionTest(spinLattice, X, Y):
+	D = -params.D
+
+	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(X,Y)
+	spinInteraction = np.zeros(3, np.float64)
+	
+	x = D*(spinLattice[line][columnLeft][2] - spinLattice[line][columnRight][2])
+	y = D*(spinLattice[lineUp][column][2] - spinLattice[lineDown][column][2])
+	z = D*(spinLattice[line][columnRight][0] - spinLattice[lineUp][column][1] - spinLattice[line][columnLeft][0] + spinLattice[lineDown][column][1])
+	
+	spinInteraction = np.array([x,y,z])
+	
+	return spinInteraction

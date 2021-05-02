@@ -37,32 +37,38 @@ def createSpinLattice():
     
     return spinLattice
 
-#a.T = transposed matrix of a
-def createSkyrmion(Nx,Ny):
-    spinLattice = np.zeros((Nx+2,Ny+2,3),np.float64)[1:Nx+1,1:Ny+1,:]
-    normalization = (10)**(-3)
+#Periodic Boundary Condtions
+def createPbc(x,y):
+    lineDown = x-1
+    line = x
+    lineUp = x+1
 
-    i0=int(Nx/2)
-    j0=int(Ny/2)
-    
-    irange = np.arange(Nx)
-    jrange = np.arange(Ny)
+    columnRight = y-1
+    column = y
+    columnLeft = y+1
 
-    xT, yT = np.meshgrid(irange-i0, jrange-j0)
-    x = xT.T
-    y = yT.T
+    if (lineDown <= 0):
+        lineDown = params.Nx -1
 
-    r=np.sqrt(x*x+y*y)+1.e-5
-    r0=10.
+    if (lineDown >= params.Nx):
+        lineDown = 0
 
-    spinLattice[:,:,0] = x*normalization
-    spinLattice[:,:,1] = y*normalization
-    spinLattice[:,:,2] = np.sqrt(1.-spinLattice[:,:,0]*spinLattice[:,:,0]-spinLattice[:,:,1]*spinLattice[:,:,1])
-    inds=np.where(r<r0)
-    spinLattice[inds[0],inds[1],2] = -spinLattice[inds[0],inds[1],2]       
+    if (lineUp <= 0):
+        lineUp = params.Nx - 1 
 
-    return spinLattice
+    if (lineUp >= params.Nx):
+        lineUp = 0
 
-#used by createSkyrmion
-def prof(r, r0, x, y):
-    return (r/r0)*np.exp(-(r-r0)/r0)
+    if (columnLeft >= params.Ny ):
+        columnLeft = 0
+
+    if (columnLeft <= 0 ):
+        columnLeft = params.Ny - 1				    		
+
+    if (columnRight >= params.Ny):
+        columnRight = 0
+
+    if (columnRight <= 0):
+        columnRight = params.Ny - 1
+
+    return lineDown, line, lineUp, columnLeft, column, columnRight

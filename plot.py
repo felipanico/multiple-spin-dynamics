@@ -41,10 +41,10 @@ def spins2D(spinLattice, spinPositions):
 	plt.show()
 	
 
+#@TODO: fix spin positions (must be a square lattice)
 #size - number of loops
 #spinTotal - spin number of lattice
 #mx, my, mz - magnetizations in x,y and z direction
-
 def spins3D(size, spinTotal, mx, my, mz):
 	fig3 = plt.figure()
 	cx = fig3.gca(projection='3d')

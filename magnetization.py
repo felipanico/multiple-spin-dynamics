@@ -5,7 +5,7 @@ import lattice
 import calc
 import params
 
-# Parameters for higher magnetic field
+# Parameters
 n = params.n
 h = params.h
 Nx = params.Nx
@@ -30,7 +30,5 @@ for stepIndex in range(n-1):
 			mz[spinIndex][stepIndex] = spin[2]
 			spinIndex = spinIndex + 1
 
-
-print(spinLattice)
+#print(spinLattice)
 plot.spins2D(spinLattice, spinPositions)
-plot.spins3D(stepIndex, params.spinsTotal, mx, my, mz)
