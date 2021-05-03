@@ -36,6 +36,8 @@ def spins2D(spinLattice, spinPositions):
 	
 	ax.quiver(x, y, sx, sy, scale = 2, angles='xy', scale_units='xy')
 	im = ax.imshow(sz, cmap='bwr', vmin=-1, vmax=1)
+	ax.set_ylim(ax.get_ylim()[1], ax.get_ylim()[0])
+	
 	fig.colorbar(im, ax=ax)
 
 	plt.show()

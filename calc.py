@@ -18,7 +18,7 @@ def euler(spin, spinLattice, x, y):
 	spin[0] = spin[0] + params.h*result[0]
 	spin[1] = spin[1] + params.h*result[1]
 	spin[2] = spin[2] + params.h*result[2]
-	
+
 	spinLattice[x][y] = spin
 
 	return spin
@@ -26,7 +26,7 @@ def euler(spin, spinLattice, x, y):
 def Heff(spin, spinLattice, x, y):
 	LAMBDA = params._lambda
 
-	#term1 = exchangeInteraction(spinLattice, x, y) - dmiInteraction(spinLattice, x, y)
+	#term1 = exchangeInteraction(spinLattice, x, y)
 	term1 = dmInteraction(spinLattice, x, y) + params.H
 	term2 = np.cross(LAMBDA * term1, spin)
 
@@ -39,7 +39,8 @@ def exchangeInteraction(spinLattice, X, Y):
 	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(X,Y)
 
 	spinInteraction = spinLattice[lineUp][column]
-	spinInteraction += spinLattice[line][columnLeft] + spinLattice[line][columnRight]
+	spinInteraction += spinLattice[line][columnLeft]
+	spinInteraction += spinLattice[line][columnRight]
 	spinInteraction += spinLattice[lineDown][column]
 	
 	return J*spinInteraction
@@ -50,21 +51,8 @@ def dmInteraction(spinLattice, X, Y):
 	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(X,Y)
 	
 	spinInteraction = spinLattice[lineUp][column]
-	spinInteraction += spinLattice[line][columnLeft] + spinLattice[line][columnRight]
-	spinInteraction += -spinLattice[lineDown][column]
-
+	spinInteraction -= spinLattice[lineDown][column]
+	spinInteraction += spinLattice[line][columnLeft] 
+	spinInteraction += spinLattice[line][columnRight]
+	
 	return D*spinInteraction
-
-def dmInteractionTest(spinLattice, X, Y):
-	D = -params.D
-
-	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(X,Y)
-	spinInteraction = np.zeros(3, np.float64)
-	
-	x = D*(spinLattice[line][columnLeft][2] - spinLattice[line][columnRight][2])
-	y = D*(spinLattice[lineUp][column][2] - spinLattice[lineDown][column][2])
-	z = D*(spinLattice[line][columnRight][0] - spinLattice[lineUp][column][1] - spinLattice[line][columnLeft][0] + spinLattice[lineDown][column][1])
-	
-	spinInteraction = np.array([x,y,z])
-	
-	return spinInteraction

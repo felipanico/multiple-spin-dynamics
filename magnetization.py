@@ -30,5 +30,5 @@ for stepIndex in range(n-1):
 			mz[spinIndex][stepIndex] = spin[2]
 			spinIndex = spinIndex + 1
 
-#print(spinLattice)
+spinLattice[0] = 0 #@todo:fix issue with first element
 plot.spins2D(spinLattice, spinPositions)

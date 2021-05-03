@@ -34,7 +34,7 @@ def createSpinLattice():
             spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
             spinLattice[x][y] = spin
-    
+
     return spinLattice
 
 #Periodic Boundary Condtions
@@ -43,9 +43,9 @@ def createPbc(x,y):
     line = x
     lineUp = x+1
 
-    columnRight = y-1
+    columnRight = y+1
     column = y
-    columnLeft = y+1
+    columnLeft = y-1
 
     if (lineDown <= 0):
         lineDown = params.Nx -1
