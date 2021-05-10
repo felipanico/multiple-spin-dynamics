@@ -3,56 +3,66 @@ import params
 import lattice
 import sys
 
-def euler(spin, spinLattice, x, y):
+def euler(spinLattice, x, y):
+	spin = spinLattice[x][y]
+
 	magx = spin[0]
 	magy = spin[1]
 	magz = spin[2]
 
-	spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-	spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-	spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
+	#spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+	#spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
+	#spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
-	H = Heff(spin, spinLattice, x, y)
-	result = np.cross(spin, H)
+	result = LLG(spin, spinLattice, x, y)
 	
 	spin[0] = spin[0] + params.h*result[0]
 	spin[1] = spin[1] + params.h*result[1]
 	spin[2] = spin[2] + params.h*result[2]
 
-	spinLattice[x][y] = spin
-
 	return spin
 	
-def Heff(spin, spinLattice, x, y):
-	LAMBDA = params._lambda
+def LLG(spin, spinLattice, x, y):
+	alpha = params.alpha
 
-	#term1 = exchangeInteraction(spinLattice, x, y)
-	term1 = dmInteraction(spinLattice, x, y) + params.H
-	term2 = np.cross(LAMBDA * term1, spin)
+	Heff = dmInteraction(spinLattice, x, y)
+	
+	SxHeff = np.cross(spin, Heff)
 
-	return term1 + term2
+	SxSxHeff = np.cross(spin, SxHeff)
 
+	return -SxHeff - alpha*SxSxHeff
 
 def exchangeInteraction(spinLattice, X, Y):
-	J = -params.J
+	J = params.J
 
 	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(X,Y)
 
-	spinInteraction = spinLattice[lineUp][column]
-	spinInteraction += spinLattice[line][columnLeft]
-	spinInteraction += spinLattice[line][columnRight]
-	spinInteraction += spinLattice[lineDown][column]
+	spinInteraction = np.zeros(3, np.float64)
 	
-	return J*spinInteraction
+	spinInteraction[0] = J*(spinLattice[line][columnLeft][0] + spinLattice[line][columnRight][0] + spinLattice[lineDown][column][0] + spinLattice[lineUp][column][0])
+	spinInteraction[1] = J*(spinLattice[line][columnLeft][1] + spinLattice[line][columnRight][1] + spinLattice[lineDown][column][1] + spinLattice[lineUp][column][1])
+	spinInteraction[2] = J*(spinLattice[line][columnLeft][2] + spinLattice[line][columnRight][2] + spinLattice[lineDown][column][2] + spinLattice[lineUp][column][2])
+
+	return spinInteraction
 
 def dmInteraction(spinLattice, X, Y):
-	D = -params.D
+	D = params.D
 
-	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(X,Y)
+	#beff[0] += dmi*(mag[indz(i,j-1)]-mag[indz(i,j+1)]);
+	#beff[1] += dmi*(mag[indz(i+1,j)]-mag[indz(i-1,j)]);
+	#beff[2] += dmi*(mag[indx(i,j+1)]-mag[indy(i+1,j)]-mag[indx(i,j-1)]+mag[indy(i-1,j)]);
 	
-	spinInteraction = spinLattice[lineUp][column]
-	spinInteraction -= spinLattice[lineDown][column]
+	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(X,Y)
+
+	#spinInteraction = np.zeros(3, np.float64)
+	
+	#spinInteraction = D*(spinLattice[lineUp][column][2] - spinLattice[lineDown][column][2])
+	#spinInteraction = D*(spinLattice[line][columnRight][2] + spinLattice[line][columnLeft][2])
+	#spinInteraction = D*(spinLattice[lineUp][column][0] - spinLattice[line][columnRight][1] - spinLattice[lineDown][column][0] + spinLattice[line][columnLeft][1])
+
+	spinInteraction = spinLattice[lineUp][column] - spinLattice[lineDown][column]
 	spinInteraction += spinLattice[line][columnLeft] 
 	spinInteraction += spinLattice[line][columnRight]
 	
-	return D*spinInteraction
+	return spinInteraction

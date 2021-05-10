@@ -16,19 +16,21 @@ mx = np.zeros((Nx*Ny,n-1))
 my = np.zeros((Nx*Ny,n-1))
 mz = np.zeros((Nx*Ny,n-1))
 
-spinLattice = lattice.createSpinLattice()
+initialSpins = lattice.createSpinLattice()
 spinPositions = lattice.createSpinPositions()
-plot.spins2D(spinLattice, spinPositions)
+plot.spins2D(initialSpins, spinPositions)
 
+finalSpins = np.zeros((params.Nx,params.Ny,3), np.float64)
 for stepIndex in range(n-1):
 	spinIndex = 0
 	for x in range(Nx):
 		for y in range(Ny):
-			spin = calc.euler(spinLattice[x][y], spinLattice, x, y)
+			spin = calc.euler(initialSpins, x, y)
+			initialSpins[x][y] = spin #finalSpins
+			
 			mx[spinIndex][stepIndex] = spin[0]
 			my[spinIndex][stepIndex] = spin[1]
 			mz[spinIndex][stepIndex] = spin[2]
 			spinIndex = spinIndex + 1
 
-spinLattice[0] = 0 #@todo:fix issue with first element
-plot.spins2D(spinLattice, spinPositions)
+plot.spins2D(initialSpins, spinPositions)

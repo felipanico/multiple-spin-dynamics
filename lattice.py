@@ -23,8 +23,12 @@ def createSpinLattice():
     
     for x in range(params.Nx):
         for y in range(params.Ny):
-            magx = random.uniform(-10, 10)
-            magy = random.uniform(-10, 10) 
+            #magx = random.uniform(1, 10)
+            #magy = random.uniform(1, 10) 
+            #magz = random.uniform(-1, 1)
+
+            magx = 0
+            magy = 1 
             magz = random.uniform(-1, 1)
 
             spin = [magx, magy, magz]
@@ -39,13 +43,13 @@ def createSpinLattice():
 
 #Periodic Boundary Condtions
 def createPbc(x,y):
-    lineDown = x-1
-    line = x
-    lineUp = x+1
+    lineDown = y-1
+    line = y
+    lineUp = y+1
 
-    columnRight = y+1
-    column = y
-    columnLeft = y-1
+    columnRight = x+1
+    column = x
+    columnLeft = x-1
 
     if (lineDown <= 0):
         lineDown = params.Nx -1
