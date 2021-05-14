@@ -20,6 +20,7 @@ def spins2D(spinLattice, spinPositions):
 	sy = np.zeros(params.spinsTotal)
 	sz = np.zeros(params.spinsTotal)
 	
+	"""
 	for k in range(params.spinsTotal):
 		x[k] = spinPositions[k][0]
 		y[k] = spinPositions[k][1]
@@ -33,8 +34,15 @@ def spins2D(spinLattice, spinPositions):
 			k = k + 1
     				
 	sz = sz.reshape(params.spinsNumber, -1)
-	
-	ax.quiver(x, y, sx, sy, scale = 2, angles='xy', scale_units='xy')
+	"""
+
+	#@todo: remove this
+	#print(spinLattice)
+	sx = spinLattice[:,:,0]
+	sy = spinLattice[:,:,1]
+	sz = spinLattice[:,:,2]
+
+	ax.quiver(sx, sy, scale = 2, angles='xy', scale_units='xy')
 	im = ax.imshow(sz, cmap='bwr', vmin=-1, vmax=1)
 	ax.set_ylim(ax.get_ylim()[1], ax.get_ylim()[0])
 	
