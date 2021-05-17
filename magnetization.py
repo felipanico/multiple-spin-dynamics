@@ -17,7 +17,7 @@ my = np.zeros((Nx*Ny,n-1))
 mz = np.zeros((Nx*Ny,n-1))
 
 # test (microLLG)
-"""
+
 def ini_rand2():
     for i in range(Nx):
         for j in range(Ny):
@@ -27,19 +27,19 @@ def ini_rand2():
             
             spin = [magx, magy, magz]
 
-            spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-            spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-            spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
+            #spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+            #spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
+            #spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
-            mag[i][j] = spin
+            magphys[i][j] = spin
 
 mag = np.zeros((Nx+2,Ny+2,3),np.float64) ### including virtual nodes
 magphys = mag[1:Nx+1,1:Ny+1,:] ### physical nodes
 ini_rand2()
 
-#test
-mag[0,1:Ny+1,:]=magphys[0,:,:]
+mag[0,1:Ny+1,:]=magphys[1,:,:]
 mag[Nx+1,1:Ny+1,:]=magphys[Nx-1,:,:]
+
 mag[0:Nx,0,:]=magphys[:,0,:]
 mag[1:Nx+1,Ny+1,:]=magphys[:,Ny-1,:]
 
@@ -52,11 +52,11 @@ mag[Nx+1,Ny+1,:]=0.
 Nframes = 16
 magdata=np.empty((Nframes,Nx+2,Ny+2,3),dtype=np.float64)
 magdata[0]=np.copy(mag)
-initialSpins = magdata[0]
-"""
 
 spinPositions = lattice.createSpinPositions()
-initialSpins = lattice.createSpinLattice()
+initialSpins = magdata[0]
+#print(initialSpins)
+#initialSpins = lattice.createSpinLattice()
 
 plot.spins2D(initialSpins, spinPositions)
 
@@ -71,4 +71,5 @@ for stepIndex in range(n-1):
             spinIndex = spinIndex + 1
             #sys.exit()
 
-plot.spins2D(finalSpins, spinPositions)
+print(finalSpins)
+#plot.spins2D(finalSpins, spinPositions)

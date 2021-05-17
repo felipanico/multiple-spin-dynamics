@@ -36,6 +36,10 @@ def spins2D(spinLattice, spinPositions):
 	sz = sz.reshape(params.spinsNumber, -1)
 	"""
 
+	#mx=magdata[-1,1:Nx+1,1:Ny+1,0]
+	#my=magdata[-1,1:Nx+1,1:Ny+1,1]
+	#mz=magdata[-1,1:Nx+1,1:Ny+1,2]
+	
 	#@todo: remove this
 	#print(spinLattice)
 	sx = spinLattice[:,:,0]

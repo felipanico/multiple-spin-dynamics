@@ -5,18 +5,18 @@ import sys
 
 def euler(spinLattice, x, y):
 	spin = spinLattice[x][y]
-
+	
 	magx = spin[0]
 	magy = spin[1]
 	magz = spin[2]
 
-	spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-	spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-	spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
+	#if (magx > 0 and magy > 0 and magz > 0):
+		#spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+		#spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
+		#spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
 	result = LLG(spin, spinLattice, x, y)
-
-		
+	
 	spin[0] = spin[0] + params.h*result[0]
 	spin[1] = spin[1] + params.h*result[1]
 	spin[2] = spin[2] + params.h*result[2]
@@ -34,22 +34,37 @@ def LLG(spin, spinLattice, x, y):
 
 	return -SxHeff - alpha*SxSxHeff
 
-def exchangeInteraction(spinLattice, X, Y):
-	J = -params.J
+def exchangeInteraction(spinLattice, i, j):
+	J = params.J
 
-	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(X,Y)
+	iMinus, i, iPlus, jMinus, j, jPlus = lattice.createPbc(i,j)
 
-	spinInteraction = np.zeros(3, np.float64)
+	beff = np.zeros(3, np.float64)
+	grid = np.copy(spinLattice)
+	contJ = j + 1
+	contI = i + 1
 
-	spinInteraction = spinLattice[lineDown][columnLeft] + spinLattice[lineDown][column] + spinLattice[lineDown][columnRight]
-	spinInteraction += spinLattice[line][columnLeft] + spinLattice[line][column] + spinLattice[line][columnRight]
-	spinInteraction += spinLattice[lineUp][columnLeft] + spinLattice[lineUp][column] + spinLattice[lineUp][columnRight]
+	iMinus = contI - 1
+	if (contI == 1):
+		iMinus = params.Nx+1
 
-	#spinInteraction[0] = J*(spinLattice[line][columnLeft][0] + spinLattice[line][columnRight][0] + spinLattice[lineDown][column][0] + spinLattice[lineUp][column][0])
-	#spinInteraction[1] = J*(spinLattice[line][columnLeft][1] + spinLattice[line][columnRight][1] + spinLattice[lineDown][column][1] + spinLattice[lineUp][column][1])
-	#spinInteraction[2] = J*(spinLattice[line][columnLeft][2] + spinLattice[line][columnRight][2] + spinLattice[lineDown][column][2] + spinLattice[lineUp][column][2])
+	iPlus = contI + 1
+	if (contI == params.Nx):
+		iPlus = 1
 
-	return J*spinInteraction
+	jMinus = contJ - 1
+	if (contJ == 1):
+		jMinus = params.Ny+1
+
+	jPlus = contI + 1
+	if (contJ == params.Ny):
+		jPlus = 1	
+	
+	beff[0] = grid[iMinus][contJ][0] + grid[iPlus][contJ][0] + grid[contI][jMinus][0] + grid[contI][jPlus][0]
+	beff[1] = grid[iMinus][contJ][1] + grid[iPlus][contJ][1] + grid[contI][jMinus][1] + grid[contI][jPlus][1]
+	beff[2] = grid[iMinus][contJ][2] + grid[iPlus][contJ][2] + grid[contI][jMinus][2] + grid[contI][jPlus][2]
+	
+	return J*beff
 
 def dmInteraction(spinLattice, x, y):
 	D = -params.D

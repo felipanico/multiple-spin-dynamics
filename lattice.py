@@ -27,6 +27,10 @@ def createSpinLattice():
             magy = random.uniform(-10, 10) 
             magz = random.uniform(-1, 1)
 
+            #magx = i + 1
+            #magy = j + 1
+            #magz = magx + magy
+
             spin = [magx, magy, magz]
 
             spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
@@ -39,36 +43,36 @@ def createSpinLattice():
 
 #Periodic Boundary Condtions
 def createPbc(x,y):
-    lineDown = x-1
-    line = x
-    lineUp = x+1
+    iMinus = x-1
+    i = x
+    iPlus = x+1
 
-    columnRight = y+1
-    column = y
-    columnLeft = y-1
+    jPlus = y+1
+    j = y
+    jMinus = y-1
 
-    if (lineDown <= 0):
-        lineDown = params.Nx -1
+    if (iMinus < 0):
+        iMinus = (params.Nx + 2) -1
 
-    if (lineDown >= params.Nx):
-        lineDown = 0
+    if (iMinus > params.Nx):
+        iMinus = 0
 
-    if (lineUp <= 0):
-        lineUp = params.Nx - 1 
+    if (iPlus <= 0):
+        iPlus = params.Nx - 1 
 
-    if (lineUp >= params.Nx):
-        lineUp = 0
+    if (iPlus > params.Nx):
+        iPlus = 0
 
-    if (columnLeft >= params.Ny ):
-        columnLeft = 0
+    if (jPlus > params.Ny ):
+        jPlus = 0
 
-    if (columnLeft <= 0 ):
-        columnLeft = params.Ny - 1				    		
+    if (jMinus < 0 ):
+       jMinus = (params.Ny + 2) -1			    		
 
-    if (columnRight >= params.Ny):
-        columnRight = 0
+    if (jPlus > params.Ny):
+        jPlus = 0
 
-    if (columnRight <= 0):
-        columnRight = params.Ny - 1
+    if (jPlus < 0):
+        jPlus = (params.Ny + 2) -1
 
-    return lineDown, line, lineUp, columnLeft, column, columnRight
+    return iMinus, i, iPlus, jMinus, j, jPlus
