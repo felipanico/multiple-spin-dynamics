@@ -16,23 +16,66 @@ def euler(spinLattice, x, y):
 
 	result = LLG(spin, spinLattice, x, y)
 
-		
+	print(result)
+	sys.exit()
+
 	spin[0] = spin[0] + params.h*result[0]
 	spin[1] = spin[1] + params.h*result[1]
 	spin[2] = spin[2] + params.h*result[2]
 
+	print(spin)
+	#sys.exit()
+	
 	return spin
 	
-def LLG(spin, spinLattice, x, y):
+def LLG(S, spinLattice, x, y):
 	alpha = params.alpha
 
-	Heff = params.H + exchangeInteraction(spinLattice, x, y)
+	Heff = np.copy(params.H)
 
+	spin = np.copy(S)
+	
 	SxHeff = np.cross(spin, Heff)
 
 	SxSxHeff = np.cross(spin, SxHeff)
 
 	return -SxHeff - alpha*SxSxHeff
+
+def exchangeInteractionTest(spinLattice, i, j):
+	J = params.J
+
+	beff = np.zeros(3, np.float64)
+	grid = np.copy(spinLattice)
+
+	iMinus = i - 1
+	if (iMinus <= 0):
+		iMinus = params.Nx-1
+
+	iPlus = i + 1
+	if (iPlus >= params.Nx):
+		iPlus = 0
+
+	jMinus = j - 1
+	if (jMinus <= 0):
+		jMinus = params.Ny-1
+
+	jPlus = j + 1
+	if (jPlus >= params.Ny):
+		jPlus = 0
+
+	auxIminus = np.zeros(3, np.float64)
+	if (i-1 > 0):
+		auxIminus = grid[iMinus]
+
+	auxIplus = np.zeros(3, np.float64)
+	if (i+1 < params.Nx):
+		auxIplus = grid[iPlus]	
+
+	beff[0] = auxIminus[0] + auxIplus[0] + grid[i][jMinus][0] + grid[i][jPlus][0]
+	beff[1] = auxIminus[1] + auxIplus[1] + grid[i][jMinus][1] + grid[i][jPlus][1]
+	beff[2] = auxIminus[2] + auxIplus[2] + grid[i][jMinus][2] + grid[i][jPlus][2]
+
+	return J*beff
 
 def exchangeInteraction(spinLattice, X, Y):
 	J = -params.J

@@ -23,9 +23,13 @@ def createSpinLattice():
     
     for i in range(params.Nx):
         for j in range(params.Ny):
-            magx = random.uniform(-10, 10)
-            magy = random.uniform(-10, 10) 
+            magx = random.uniform(-1, 1)
+            magy = random.uniform(-1, 1) 
             magz = random.uniform(-1, 1)
+
+            #magx = i +1
+            #magy = j+1
+            #magz = magx+magy
 
             spin = [magx, magy, magz]
 

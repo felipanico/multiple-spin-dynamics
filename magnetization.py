@@ -1,3 +1,4 @@
+from typing import final
 import numpy as np
 import sys
 import plot
@@ -58,8 +59,7 @@ initialSpins = magdata[0]
 spinPositions = lattice.createSpinPositions()
 initialSpins = lattice.createSpinLattice()
 
-plot.spins2D(initialSpins, spinPositions)
-
+#plot.spins2D(initialSpins, spinPositions)
 finalSpins = np.zeros((params.Nx,params.Ny,3), np.float64)
 
 for stepIndex in range(n-1):
@@ -69,6 +69,6 @@ for stepIndex in range(n-1):
             spin = calc.euler(initialSpins, x, y)
             finalSpins[x][y] = spin
             spinIndex = spinIndex + 1
-            #sys.exit()
 
-plot.spins2D(finalSpins, spinPositions)
+print(finalSpins)
+#plot.spins2D(finalSpins, spinPositions)

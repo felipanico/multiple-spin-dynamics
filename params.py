@@ -1,19 +1,19 @@
 import numpy as np
 
 #loop
-n = 1000
-h = 0.02
+n = 10
+h = 0.01
 
 #spins
-spinsNumber = 10
-Nx = spinsNumber
-Ny = spinsNumber
+spinsNumber = 100
+Nx = 1
+Ny = 3
 spinsTotal = Nx * Ny
 
 J = 1 #mev
 Ms = 1 #saturation magnetisation (?)
 D = 0.18
-B = 1
+B = 5
 
 alpha = 0.02 #program micro llg
 gamma = 3.5 #program micro llg
