@@ -23,7 +23,7 @@ def euler(spin, spinLattice, x, y):
 	return spin
 	
 def Heff(spin, spinLattice, x, y):
-	_lambda = 0.2
+	_lambda = 1
 	A = 1
 	B = 1
 	C = 1
