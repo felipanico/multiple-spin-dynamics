@@ -33,4 +33,3 @@ for stepIndex in range(n-1):
 
 print(spinLattice)
 plot.spins2D(spinLattice, spinPositions)
-plot.spins3D(stepIndex, params.spinsTotal, mx, my, mz)

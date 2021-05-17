@@ -13,17 +13,17 @@ def individualMagnetization(mx, my, mz):
 
 def spins2D(spinLattice, spinPositions):
 	fig, ax = plt.subplots(figsize=(6,6))
-	
+
 	x = np.zeros(params.spinsTotal)
 	y = np.zeros(params.spinsTotal)
 	sx = np.zeros(params.spinsTotal)
 	sy = np.zeros(params.spinsTotal)
 	sz = np.zeros(params.spinsTotal)
-	
+
 	for k in range(params.spinsTotal):
 		x[k] = spinPositions[k][0]
 		y[k] = spinPositions[k][1]
-		
+
 	k = 0
 	for i in range(params.Nx):
 		for j in range(params.Ny):
@@ -31,9 +31,9 @@ def spins2D(spinLattice, spinPositions):
 			sy[k] = spinLattice[i][j][1]
 			sz[k] = spinLattice[i][j][2]
 			k = k + 1
-    				
+				
 	sz = sz.reshape(params.spinsNumber, -1)
-	
+
 	ax.quiver(x, y, sx, sy, scale = 2, angles='xy', scale_units='xy')
 	im = ax.imshow(sz, cmap='bwr', vmin=-1, vmax=1)
 	fig.colorbar(im, ax=ax)

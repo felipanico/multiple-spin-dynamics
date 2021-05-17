@@ -7,7 +7,7 @@ def euler(spin, spinLattice, x, y):
 	magy = spin[1]
 	magz = spin[2]
 
-	spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+	spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2) 
 	spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
 	spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
@@ -23,14 +23,18 @@ def euler(spin, spinLattice, x, y):
 	return spin
 	
 def Heff(spin, spinLattice, x, y):
-	_lambda = 1
+	_lambda = 0.2
 	A = 1
 	B = 1
 	C = 1
 
 	#anisotropyInteraction = A*spin[0] + B*spin[1] + C*spin[2]
 
-	term1 = np.add(exchangeInteraction(spinLattice, spin, x, y), params.H) 
+	Heff = exchangeInteraction(spinLattice, spin, x, y)
+
+	#print(Heff)
+	
+	term1 = np.add(Heff, params.H) 
 	term2 = np.cross(_lambda * term1, spin)
 
 	return np.add(term1, term2)
@@ -72,8 +76,8 @@ def exchangeInteraction(spinLattice, spin, X, Y):
 	if (columnRight <= 0):
 		columnRight = Ny - 1	
 	
-	spinInteraction = spinLattice[lineDown][columnLeft] + spinLattice[lineDown][column] + spinLattice[lineDown][columnRight]
-	spinInteraction += spinLattice[line][columnLeft] + spinLattice[line][column] + spinLattice[line][columnRight]
-	spinInteraction += spinLattice[lineUp][columnLeft] + spinLattice[lineUp][column] + spinLattice[lineUp][columnRight]
-		
-	return J*spinInteraction
+	sx = np.copy(spinLattice[lineDown][columnLeft][0]) + np.copy(spinLattice[lineDown][column][0]) + np.copy(spinLattice[lineDown][columnRight][0])
+	sy = np.copy(spinLattice[lineDown][columnLeft][1]) + np.copy(spinLattice[lineDown][column][1]) + np.copy(spinLattice[lineDown][columnRight][1])
+	sz = np.copy(spinLattice[lineDown][columnLeft][2]) + np.copy(spinLattice[lineDown][column][2]) + np.copy(spinLattice[lineDown][columnRight][2])
+	
+	return J*np.array([sx,sy,sz])
