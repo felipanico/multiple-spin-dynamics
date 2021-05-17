@@ -4,6 +4,7 @@ import plot
 import lattice
 import calc
 import params
+import random
 
 # Parameters
 n = params.n
@@ -23,13 +24,17 @@ def ini_rand2():
         for j in range(Ny):
             magx = i + 1
             magy = j + 1
-            magz = magx + magy
+            #magz = magx + magy
+
+            #magx = random.uniform(-10, 10)
+            #magy = random.uniform(-10, 10) 
+            magz = random.uniform(-1, 1)
             
             spin = [magx, magy, magz]
 
-            #spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-            #spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-            #spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
+            spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+            spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
+            spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
             magphys[i][j] = spin
 
@@ -55,21 +60,39 @@ magdata[0]=np.copy(mag)
 
 spinPositions = lattice.createSpinPositions()
 initialSpins = magdata[0]
-#print(initialSpins)
-#initialSpins = lattice.createSpinLattice()
 
-plot.spins2D(initialSpins, spinPositions)
+plot.plotTest(magdata)
 
 finalSpins = np.zeros((params.Nx,params.Ny,3), np.float64)
+mag2 = np.zeros((Nx+2,Ny+2,3),np.float64)
+magphys2 = mag[1:Nx+1,1:Ny+1,:]
 
 for stepIndex in range(n-1):
     spinIndex = 0
     for x in range(Nx):
         for y in range(Ny):
             spin = calc.euler(initialSpins, x, y)
-            finalSpins[x][y] = spin
+            magphys2[x][y] = spin
             spinIndex = spinIndex + 1
             #sys.exit()
 
-print(finalSpins)
+mag2[0,1:Ny+1,:]=magphys2[1,:,:]
+mag2[Nx+1,1:Ny+1,:]=magphys2[Nx-1,:,:]
+
+mag2[0:Nx,0,:]=magphys2[:,0,:]
+mag2[1:Nx+1,Ny+1,:]=magphys2[:,Ny-1,:]
+
+mag2[0,0,:]=0.
+mag2[0,Ny+1,:]=0.
+mag2[Nx+1,0,:]=0.
+mag2[Nx+1,Ny+1,:]=0.
+
+magdata2=np.empty((Nframes,Nx+2,Ny+2,3),dtype=np.float64)
+magdata2[0]=np.copy(mag2)
+
+print(magdata2)
+#sys.exit()
+
+plot.plotTest(magdata2)
+#print(finalSpins)
 #plot.spins2D(finalSpins, spinPositions)

@@ -1,7 +1,7 @@
 import numpy as np
 
 #loop
-n = 2
+n = 300
 h = 0.02
 
 #spins

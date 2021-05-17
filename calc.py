@@ -10,10 +10,10 @@ def euler(spinLattice, x, y):
 	magy = spin[1]
 	magz = spin[2]
 
-	#if (magx > 0 and magy > 0 and magz > 0):
-		#spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-		#spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-		#spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
+	if (magx > 0 and magy > 0 and magz > 0):
+		spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+		spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
+		spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
 	result = LLG(spin, spinLattice, x, y)
 	
