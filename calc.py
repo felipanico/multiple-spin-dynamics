@@ -1,8 +1,11 @@
 import numpy as np
 import params
+import lattice
 import sys
 
-def euler(spin, spinLattice, x, y):
+def euler(spinLattice, x, y):
+	spin = spinLattice[x][y]
+
 	magx = spin[0]
 	magy = spin[1]
 	magz = spin[2]
@@ -11,73 +14,56 @@ def euler(spin, spinLattice, x, y):
 	spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
 	spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
-	H = Heff(spin, spinLattice, x, y)
-	result = np.cross(spin, H)
-	
+	result = LLG(spin, spinLattice, x, y)
+
 	spin[0] = spin[0] + params.h*result[0]
 	spin[1] = spin[1] + params.h*result[1]
 	spin[2] = spin[2] + params.h*result[2]
-	
-	spinLattice[x][y] = spin
 
 	return spin
 	
-def Heff(spin, spinLattice, x, y):
-	_lambda = 1
-	A = 1
-	B = 1
-	C = 1
+def LLG(spin, spinLattice, x, y):
+	alpha = params.alpha
+	gamma = params.gamma
 
-	#anisotropyInteraction = A*spin[0] + B*spin[1] + C*spin[2]
+	#Heff = np.copy(params.H) + exchangeInteraction(spinLattice, x, y)
 
-	Heff = exchangeInteraction(spinLattice, spin, x, y)
-
-	#print(Heff)
+	#Heff = np.copy(params.H + dmInteraction(spinLattice, x, y) + exchangeInteraction(spinLattice, x, y))
 	
-	term1 = np.add(Heff, params.H) 
-	term2 = np.cross(_lambda * term1, spin)
-
-	return np.add(term1, term2)
-
-def exchangeInteraction(spinLattice, spin, X, Y):
-	J = 1
-	Nx = params.Nx
-	Ny = params.Ny
+	Heff = np.copy(dmInteraction(spinLattice, x, y))
 	
-	lineDown = X-1
-	line = X
-	lineUp = X+1
+	S = np.copy(spin)
 	
-	columnRight = Y-1
-	column = Y
-	columnLeft = Y+1
+	SxHeff = np.cross(S, Heff)
 
-	if (lineDown <= 0):
-		lineDown = Nx -1
+	SxSxHeff = np.cross(S, SxHeff)
 
-	if (lineDown >= Nx):
-		lineDown = 0
+	return -SxHeff - alpha*SxSxHeff
 
-	if (lineUp <= 0):
-		lineUp = Nx - 1 
-
-	if (lineUp >= Nx):
-		lineUp = 0
-
-	if (columnLeft >= Ny ):
-		columnLeft = 0
-
-	if (columnLeft <= 0 ):
-		columnLeft = Ny - 1				    		
-
-	if (columnRight >= Ny):
-		columnRight = 0
-
-	if (columnRight <= 0):
-		columnRight = Ny - 1	
+def exchangeInteraction(spinLattice, x, y):
+	J = -params.J
 	
-	sx = np.copy(spinLattice[lineDown][columnLeft][0]) + np.copy(spinLattice[lineDown][column][0]) + np.copy(spinLattice[lineDown][columnRight][0])
-	sy = np.copy(spinLattice[lineDown][columnLeft][1]) + np.copy(spinLattice[lineDown][column][1]) + np.copy(spinLattice[lineDown][columnRight][1])
-	sz = np.copy(spinLattice[lineDown][columnLeft][2]) + np.copy(spinLattice[lineDown][column][2]) + np.copy(spinLattice[lineDown][columnRight][2])
+	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(x,y)
+	
+	sx = np.copy(spinLattice[lineUp][column][0]) + np.copy(spinLattice[lineDown][column][0]) + np.copy(spinLattice[line][columnRight][0]) + np.copy(spinLattice[line][columnLeft][0])
+	sy = np.copy(spinLattice[lineUp][column][1]) + np.copy(spinLattice[lineDown][column][1]) + np.copy(spinLattice[line][columnRight][1]) + np.copy(spinLattice[line][columnLeft][1])
+	sz = np.copy(spinLattice[lineUp][column][2]) + np.copy(spinLattice[lineDown][column][2]) + np.copy(spinLattice[line][columnRight][2]) + np.copy(spinLattice[line][columnLeft][2])
 	
 	return J*np.array([sx,sy,sz])
+
+def dmInteraction(spinLattice, x, y):
+	D = -params.D
+
+	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(x,y)
+	
+	#second version
+	sx = np.copy(spinLattice[lineDown][column][2]) - np.copy(spinLattice[lineUp][column][2])
+	sy = np.copy(spinLattice[line][columnRight][2]) - np.copy(spinLattice[line][columnLeft][2])
+	sz = np.copy(spinLattice[lineUp][column][0]) - np.copy(spinLattice[line][columnRight][1]) - np.copy(spinLattice[lineDown][column][0]) + np.copy(spinLattice[line][columnLeft][1])
+	
+	# first version
+	#sx = np.copy(spinLattice[line][columnLeft][2]) - np.copy(spinLattice[line][columnRight][2])
+	#sy = np.copy(spinLattice[lineUp][column][2]) - np.copy(spinLattice[lineDown][column][2])
+	#sz = np.copy(spinLattice[line][columnRight][0]) - np.copy(spinLattice[lineUp][column][1]) - np.copy(spinLattice[line][columnLeft][0]) + np.copy(spinLattice[lineDown][column][1])
+
+	return D*np.array([sx,sy,sz])

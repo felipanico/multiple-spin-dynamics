@@ -21,11 +21,16 @@ def createSpinPositions():
 def createSpinLattice():
     spinLattice = np.zeros((params.Nx,params.Ny,3), np.float64)
     
-    for x in range(params.Nx):
-        for y in range(params.Ny):
-            magx = random.uniform(-10, 10)
-            magy = random.uniform(-10, 10) 
-            magz = random.uniform(-1, 1)
+    for i in range(params.Nx):
+        for j in range(params.Ny):
+            #magx = random.uniform(-1, 1)
+            #magy = random.uniform(-1, 1) 
+            #magz = random.uniform(-1, 1)
+
+            #test
+            magx = i +1
+            magy = j+1
+            magz = magx + magy
 
             spin = [magx, magy, magz]
 
@@ -33,36 +38,42 @@ def createSpinLattice():
             spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
             spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
-            spinLattice[x][y] = spin
-    
-    return spinLattice
-
-#a.T = transposed matrix of a
-def createSkyrmion(Nx,Ny):
-    spinLattice = np.zeros((Nx+2,Ny+2,3),np.float64)[1:Nx+1,1:Ny+1,:]
-    normalization = (10)**(-3)
-
-    i0=int(Nx/2)
-    j0=int(Ny/2)
-    
-    irange = np.arange(Nx)
-    jrange = np.arange(Ny)
-
-    xT, yT = np.meshgrid(irange-i0, jrange-j0)
-    x = xT.T
-    y = yT.T
-
-    r=np.sqrt(x*x+y*y)+1.e-5
-    r0=10.
-
-    spinLattice[:,:,0] = x*normalization
-    spinLattice[:,:,1] = y*normalization
-    spinLattice[:,:,2] = np.sqrt(1.-spinLattice[:,:,0]*spinLattice[:,:,0]-spinLattice[:,:,1]*spinLattice[:,:,1])
-    inds=np.where(r<r0)
-    spinLattice[inds[0],inds[1],2] = -spinLattice[inds[0],inds[1],2]       
+            spinLattice[i][j] = spin
 
     return spinLattice
 
-#used by createSkyrmion
-def prof(r, r0, x, y):
-    return (r/r0)*np.exp(-(r-r0)/r0)
+#Periodic Boundary Condtions
+def createPbc(x,y):
+    lineDown = x-1
+    line = x
+    lineUp = x+1
+
+    columnRight = y+1
+    column = y
+    columnLeft = y-1
+
+    if (lineDown <= 0):
+        lineDown = params.Nx -1
+
+    if (lineDown >= params.Nx):
+        lineDown = 0
+
+    if (lineUp <= 0):
+        lineUp = params.Nx - 1 
+
+    if (lineUp >= params.Nx):
+        lineUp = 0
+
+    if (columnLeft >= params.Ny ):
+        columnLeft = 0
+
+    if (columnLeft <= 0 ):
+        columnLeft = params.Ny - 1				    		
+
+    if (columnRight >= params.Ny):
+        columnRight = 0
+
+    if (columnRight <= 0):
+        columnRight = params.Ny - 1
+
+    return lineDown, line, lineUp, columnLeft, column, columnRight
