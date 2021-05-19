@@ -13,17 +13,20 @@ def individualMagnetization(mx, my, mz):
 
 def spins2D(spinLattice, spinPositions):
 	fig, ax = plt.subplots(figsize=(6,6))
-	
+
 	x = np.zeros(params.spinsTotal)
 	y = np.zeros(params.spinsTotal)
 	sx = np.zeros(params.spinsTotal)
 	sy = np.zeros(params.spinsTotal)
 	sz = np.zeros(params.spinsTotal)
 	
+	
+	#test plot manually
+	"""
 	for k in range(params.spinsTotal):
 		x[k] = spinPositions[k][0]
 		y[k] = spinPositions[k][1]
-		
+
 	k = 0
 	for i in range(params.Nx):
 		for j in range(params.Ny):
@@ -31,20 +34,28 @@ def spins2D(spinLattice, spinPositions):
 			sy[k] = spinLattice[i][j][1]
 			sz[k] = spinLattice[i][j][2]
 			k = k + 1
-    				
+				
 	sz = sz.reshape(params.spinsNumber, -1)
+	"""
 	
-	ax.quiver(x, y, sx, sy, scale = 2, angles='xy', scale_units='xy')
-	im = ax.imshow(sz, cmap='bwr', vmin=-1, vmax=1)
+	#test - plot one dimensional grid
+	sx = spinLattice[:,:,0]
+	sy = spinLattice[:,:,1]
+	sz = spinLattice[:,:,2]
+
+	ax.quiver(sx, sz, scale = 2, angles='xy', scale_units='xy', headwidth=6, headlength=8, width=0.0025)
+	im = ax.imshow(sy, cmap='bwr', vmin=-1, vmax=1)
+	ax.set_ylim(ax.get_ylim()[1], ax.get_ylim()[0])
+	
 	fig.colorbar(im, ax=ax)
 
 	plt.show()
 	
 
+#@TODO: fix spin positions (must be a square lattice)
 #size - number of loops
 #spinTotal - spin number of lattice
 #mx, my, mz - magnetizations in x,y and z direction
-
 def spins3D(size, spinTotal, mx, my, mz):
 	fig3 = plt.figure()
 	cx = fig3.gca(projection='3d')
@@ -58,8 +69,8 @@ def spins3D(size, spinTotal, mx, my, mz):
 	sz = np.zeros((spinTotal))
 
 	for k in range(spinTotal):
-		x[k] = random.uniform(1, 2)
-		y[k] = random.uniform(1, 2)
+		x[k] = 0
+		y[k] = k
 		z[k] = 0
 
 		sx[k] = mx[k][size-1]
