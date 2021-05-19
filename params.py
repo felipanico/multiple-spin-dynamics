@@ -1,7 +1,7 @@
 import numpy as np
 
 #loop
-n = 300
+n = 1
 h = 0.02
 
 #spins
@@ -12,7 +12,7 @@ spinsTotal = Nx * Ny
 
 J = 1 #mev
 Ms = 1 #saturation magnetisation (?)
-D = 0.18
+D = 1
 B = 0
 
 alpha = 0.02 #program micro llg
