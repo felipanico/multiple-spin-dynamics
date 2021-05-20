@@ -61,9 +61,9 @@ magdata[0]=np.copy(mag)
 spinPositions = lattice.createSpinPositions()
 initialSpins = magdata[0]
 
-print(magdata[0])
+#print(magdata[0])
 #plot.plotTest(magdata)
-
+#plot.spins2D(initialSpins, spinPositions)
 
 finalSpins = np.zeros((params.Nx,params.Ny,3), np.float64)
 mag2 = np.zeros((Nx+2,Ny+2,3),np.float64)
@@ -75,6 +75,7 @@ for stepIndex in range(n):
         for y in range(Ny):
             spin = calc.euler(initialSpins, x, y)
             finalSpins[x][y] = spin
+            magphys2[x][y] = spin
             spinIndex = spinIndex + 1
             #sys.exit()
 
@@ -92,5 +93,6 @@ mag2[Nx+1,Ny+1,:]=0.
 magdata2=np.empty((Nframes,Nx+2,Ny+2,3),dtype=np.float64)
 magdata2[0]=np.copy(mag2)
 
-print("===")
-print(magdata2[0])
+print(magdata2)
+
+plot.plotTest(magdata2)

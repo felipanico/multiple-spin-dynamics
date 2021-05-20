@@ -4,7 +4,7 @@ import lattice
 import sys
 
 def euler(spinLattice, x, y):
-	spin = spinLattice[x][y]
+	spin = spinLattice[x + 1][y + 1]
 	
 	magx = spin[0]
 	magy = spin[1]
@@ -16,7 +16,7 @@ def euler(spinLattice, x, y):
 	#	spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
 	result = LLG(spin, spinLattice, x, y)
-	
+
 	spin[0] = spin[0] + params.h*result[0]
 	spin[1] = spin[1] + params.h*result[1]
 	spin[2] = spin[2] + params.h*result[2]
@@ -28,41 +28,46 @@ def LLG(spin, spinLattice, x, y):
 
 	Heff = dmInteraction(spinLattice, x, y)
 
-	print("Heff", Heff)
-
 	SxHeff = np.cross(spin, Heff)
 
 	SxSxHeff = np.cross(spin, SxHeff)
 
+	#print("\n")
+	#print("S", spin)
+	#print("SxHeff", SxHeff)
+	#print("SxSxHeff", SxSxHeff)
+	
 	return -SxHeff - alpha*SxSxHeff
 
 def dmInteraction(spinLattice, x, y):
-	D = -params.D
+	D = params.D
 
 	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(x,y)
 
-	print('\n')
-	
 	if (line - 1 < 0):
 		lineDown = params.Nx
 
-	if (line + 1 > params.Nx):
+	if (line + 1 >= params.Nx):
 		lineUp = 0
 
 	lineUp = lineUp + 1
+	lineDown = lineDown + 1
 	line = line + 1
 		
 	column = column + 1
-	if (column - 1 < 1):
+	if (column - 1 < params.Ny):
 		columnLeft = params.Nx -1
 
-	if (column + 1 > 3):
+	if (column + 1 > params.Nx):
 		columnRight = 1
 	
+	
+	#print('i,j', spinLattice[line][column])
 	#print('i,j-1', spinLattice[line][columnLeft])
 	#print('i,j+1', spinLattice[line][columnRight])
-	#print('i-1,j', spinLattice[lineDown][column])
+	#print(lineUp)
 	#print('i+1,j', spinLattice[lineUp][column])
+	#print('i-1,j', spinLattice[lineDown][column])
 	
 	#test
 	sx = np.copy(spinLattice[line][columnLeft][2]) - np.copy(spinLattice[line][columnRight][2])

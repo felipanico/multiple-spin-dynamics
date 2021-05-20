@@ -30,14 +30,8 @@ def plotTest(magdata):
 
 	Q = ax.quiver(mx.T,my.T,pivot='mid',zorder=2,width=width, scale=scale, angles='xy', scale_units='xy')
 
-	#props = dict(boxstyle='round',facecolor='white', alpha=0.7)
-	#ax.text(0.06, 0.94, '(d)', fontsize=15, verticalalignment='top', bbox=props,transform=ax.transAxes)
-	#ax.text(0.1, 0.9, '(a)', fontsize=20, verticalalignment='top', transform=ax.transAxes, color='w')
-
 	fig.colorbar(im, label=r'$m_z$',orientation='vertical')
 
-	#ax.set_xticks([])
-	#ax.set_yticks([])
 	plt.show()	
 
 def spins2D(spinLattice, spinPositions):
