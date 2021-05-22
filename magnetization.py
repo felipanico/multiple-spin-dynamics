@@ -1,3 +1,4 @@
+from typing import final
 import numpy as np
 import sys
 import plot
@@ -61,8 +62,6 @@ magdata[0]=np.copy(mag)
 spinPositions = lattice.createSpinPositions()
 initialSpins = magdata[0]
 
-#print(magdata[0])
-#plot.plotTest(magdata)
 #plot.spins2D(initialSpins, spinPositions)
 
 finalSpins = np.zeros((params.Nx,params.Ny,3), np.float64)
@@ -77,22 +76,9 @@ for stepIndex in range(n):
             finalSpins[x][y] = spin
             magphys2[x][y] = spin
             spinIndex = spinIndex + 1
-            #sys.exit()
 
-mag2[0,1:Ny+1,:]=magphys2[1,:,:]
-mag2[Nx+1,1:Ny+1,:]=magphys2[Nx-1,:,:]
+for aux in range(Nx):
+    mag2[aux+1][1] = finalSpins[aux]
+    
+print(mag2)
 
-mag2[0:Nx,0,:]=magphys2[:,0,:]
-mag2[1:Nx+1,Ny+1,:]=magphys2[:,Ny-1,:]
-
-mag2[0,0,:]=0.
-mag2[0,Ny+1,:]=0.
-mag2[Nx+1,0,:]=0.
-mag2[Nx+1,Ny+1,:]=0.
-
-magdata2=np.empty((Nframes,Nx+2,Ny+2,3),dtype=np.float64)
-magdata2[0]=np.copy(mag2)
-
-print(magdata2)
-
-plot.plotTest(magdata2)

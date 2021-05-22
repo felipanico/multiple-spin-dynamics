@@ -1,7 +1,7 @@
 import numpy as np
 
 #loop
-n = 1000
+n = 20
 h = 0.02
 
 #spins
@@ -13,9 +13,9 @@ spinsTotal = Nx * Ny
 J = 1 #mev
 Ms = 1 #saturation magnetisation (?)
 D = 1
-B = 0
+B = 0.015
 
-alpha = 1 #program micro llg
+alpha = 0 #program micro llg
 gamma = 3.5 #program micro llg
 
 H = np.array([0,0,B])

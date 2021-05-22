@@ -26,16 +26,12 @@ def euler(spinLattice, x, y):
 def LLG(spin, spinLattice, x, y):
 	alpha = params.alpha
 
-	Heff = dmInteraction(spinLattice, x, y)
+	Heff = params.H
 
 	SxHeff = np.cross(spin, Heff)
 
 	SxSxHeff = np.cross(spin, SxHeff)
 
-	#print("\n")
-	#print("S", spin)
-	#print("SxHeff", SxHeff)
-	#print("SxSxHeff", SxSxHeff)
 	
 	return -SxHeff - alpha*SxSxHeff
 
@@ -70,9 +66,9 @@ def dmInteraction(spinLattice, x, y):
 	#print('i-1,j', spinLattice[lineDown][column])
 	
 	#test
-	sx = np.copy(spinLattice[line][columnLeft][2]) - np.copy(spinLattice[line][columnRight][2])
-	sy = np.copy(spinLattice[lineUp][column][2]) - np.copy(spinLattice[lineDown][column][2])
-	sz = np.copy(spinLattice[line][columnRight][0]) - np.copy(spinLattice[lineUp][column][1]) - np.copy(spinLattice[line][columnLeft][0]) + np.copy(spinLattice[lineDown][column][1])
+	#sx = np.copy(spinLattice[line][columnLeft][2]) - np.copy(spinLattice[line][columnRight][2])
+	#sy = np.copy(spinLattice[lineUp][column][2]) - np.copy(spinLattice[lineDown][column][2])
+	#sz = np.copy(spinLattice[line][columnRight][0]) - np.copy(spinLattice[lineUp][column][1]) - np.copy(spinLattice[line][columnLeft][0]) + np.copy(spinLattice[lineDown][column][1])
 
 	#second version
 	#sx = np.copy(spinLattice[lineDown][column][2]) - np.copy(spinLattice[lineUp][column][2])
@@ -80,8 +76,8 @@ def dmInteraction(spinLattice, x, y):
 	#sz = np.copy(spinLattice[lineUp][column][0]) - np.copy(spinLattice[line][columnRight][1]) - np.copy(spinLattice[lineDown][column][0]) + np.copy(spinLattice[line][columnLeft][1])
 	
 	# first version
-	#sx = np.copy(spinLattice[line][columnLeft][2]) - np.copy(spinLattice[line][columnRight][2])
-	#sy = np.copy(spinLattice[lineUp][column][2]) - np.copy(spinLattice[lineDown][column][2])
-	#sz = np.copy(spinLattice[line][columnRight][0]) - np.copy(spinLattice[lineUp][column][1]) - np.copy(spinLattice[line][columnLeft][0]) + np.copy(spinLattice[lineDown][column][1])
+	sx = np.copy(spinLattice[line][columnLeft][2]) - np.copy(spinLattice[line][columnRight][2])
+	sy = np.copy(spinLattice[lineUp][column][2]) - np.copy(spinLattice[lineDown][column][2])
+	sz = np.copy(spinLattice[line][columnRight][0]) - np.copy(spinLattice[lineUp][column][1]) - np.copy(spinLattice[line][columnLeft][0]) + np.copy(spinLattice[lineDown][column][1])
 
 	return D*np.array([sx,sy,sz])
