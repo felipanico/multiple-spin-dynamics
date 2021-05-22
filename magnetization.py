@@ -33,9 +33,9 @@ def ini_rand2():
             
             spin = [magx, magy, magz]
 
-            #spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-            #spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-            #spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
+            spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+            spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
+            spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
             magphys[i][j] = spin
 
@@ -72,13 +72,13 @@ for stepIndex in range(n):
     spinIndex = 0
     for x in range(Nx):
         for y in range(Ny):
+            initialSpins = lattice.createPbc(initialSpins)
             spin = calc.euler(initialSpins, x, y)
-            finalSpins[x][y] = spin
-            magphys2[x][y] = spin
+            initialSpins[x][y] = spin
+            #finalSpins[x][y] = spin
+            #magphys2[x][y] = spin
             spinIndex = spinIndex + 1
 
-for aux in range(Nx):
-    mag2[aux+1][1] = finalSpins[aux]
-    
-print(mag2)
-
+initialSpins = lattice.createPbc(initialSpins)
+print(initialSpins)
+sys.exit()

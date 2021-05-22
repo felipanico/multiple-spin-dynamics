@@ -4,7 +4,7 @@ import lattice
 import sys
 
 def euler(spinLattice, x, y):
-	spin = spinLattice[x + 1][y + 1]
+	spin = spinLattice[x][y]
 	
 	magx = spin[0]
 	magy = spin[1]
@@ -26,12 +26,13 @@ def euler(spinLattice, x, y):
 def LLG(spin, spinLattice, x, y):
 	alpha = params.alpha
 
+	#Heff = params.H + dmInteraction(spinLattice, x, y)
+
 	Heff = params.H
 
 	SxHeff = np.cross(spin, Heff)
 
 	SxSxHeff = np.cross(spin, SxHeff)
-
 	
 	return -SxHeff - alpha*SxSxHeff
 
@@ -58,12 +59,13 @@ def dmInteraction(spinLattice, x, y):
 		columnRight = 1
 	
 	
-	#print('i,j', spinLattice[line][column])
-	#print('i,j-1', spinLattice[line][columnLeft])
-	#print('i,j+1', spinLattice[line][columnRight])
-	#print(lineUp)
-	#print('i+1,j', spinLattice[lineUp][column])
-	#print('i-1,j', spinLattice[lineDown][column])
+	print('i,j', spinLattice[line][column])
+	print('i,j-1', spinLattice[line][columnLeft])
+	print('i,j+1', spinLattice[line][columnRight])
+	print('i+1,j', spinLattice[lineUp][column])
+	print('i-1,j', spinLattice[lineDown][column])
+	
+	sys.exit()
 	
 	#test
 	#sx = np.copy(spinLattice[line][columnLeft][2]) - np.copy(spinLattice[line][columnRight][2])

@@ -42,37 +42,17 @@ def createSpinLattice():
     return spinLattice
 
 #Periodic Boundary Condtions
-def createPbc(x,y):
-    iMinus = x-1
-    i = x
-    iPlus = x+1
+def createPbc(mag):
+    aux = 1
+    for i in range(params.Nx):
+        mag[aux][0] = mag[aux][1]
+        mag[aux][params.Ny + 1] = mag[aux][params.Ny]
+        aux = aux + 1
 
-    jPlus = y+1
-    j = y
-    jMinus = y-1
-
-    if (iMinus < 0):
-        iMinus = (params.Nx + 2) -1
-
-    if (iMinus > params.Nx):
-        iMinus = 0
-
-    if (iPlus <= 0):
-        iPlus = params.Nx - 1 
-
-    if (iPlus > params.Nx):
-        iPlus = 0
-
-    if (jPlus > params.Ny ):
-        jPlus = 0
-
-    if (jMinus < 0 ):
-       jMinus = (params.Ny + 2) -1			    		
-
-    if (jPlus > params.Ny):
-        jPlus = 0
-
-    if (jPlus < 0):
-        jPlus = (params.Ny + 2) -1
-
-    return iMinus, i, iPlus, jMinus, j, jPlus
+    aux = 1
+    for j in range(params.Ny):
+        mag[0][aux] = mag[params.Nx][aux]
+        mag[params.Nx + 1][aux] = mag[1][aux]
+        aux = aux + 1    
+    
+    return mag
