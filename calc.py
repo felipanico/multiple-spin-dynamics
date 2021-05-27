@@ -3,83 +3,63 @@ import params
 import lattice
 import sys
 
-def euler(spinLattice, x, y):
-	spin = spinLattice[x][y]
+def llgEvolve(initialSpins, finalSpins):
+	for i in range(params.Nx):
+		for j in range(params.Ny):
+			result = llgSolve(initialSpins, i + 1,j + 1)
+			finalSpins[i + 1][j + 1] = np.copy(result)
+			
+	return finalSpins
 	
-	magx = spin[0]
-	magy = spin[1]
-	magz = spin[2]
+def llgSolve(spinLattice, i, j):
+	alpha = params.alpha
+	result = np.array([0,0,0])
 
-	#if (magx > 0 and magy > 0 and magz > 0):
-	#	spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-	#	spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-	#	spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
+	Hdm = np.copy(dmInteraction(spinLattice, i, j))
+	Heff = params.H + Hdm
 
-	result = LLG(spin, spinLattice, x, y)
+	spin = np.copy(spinLattice[i][j])
+
+	print("mag old", spin)
+	
+	SxHeff = np.cross(spin, Heff)
+
+	SxSxHeff = np.cross(spin, SxHeff)
+	
+	result[0] =  -SxHeff[0] - alpha*SxSxHeff[0]
+	result[1] =  -SxHeff[1] - alpha*SxSxHeff[1]
+	result[2] =  -SxHeff[2] - alpha*SxSxHeff[2]
 
 	spin[0] = spin[0] + params.h*result[0]
 	spin[1] = spin[1] + params.h*result[1]
 	spin[2] = spin[2] + params.h*result[2]
 
+	#print("Heff", Heff)
+	print("mag new", spin)
+	
 	return spin
-	
-def LLG(spin, spinLattice, x, y):
-	alpha = params.alpha
 
-	#Heff = params.H + dmInteraction(spinLattice, x, y)
-
-	Heff = params.H
-
-	SxHeff = np.cross(spin, Heff)
-
-	SxSxHeff = np.cross(spin, SxHeff)
-	
-	return -SxHeff - alpha*SxSxHeff
-
-def dmInteraction(spinLattice, x, y):
+def dmInteraction(spinLattice, i, j):
 	D = params.D
 
-	lineDown, line, lineUp, columnLeft, column, columnRight = lattice.createPbc(x,y)
-
-	if (line - 1 < 0):
-		lineDown = params.Nx
-
-	if (line + 1 >= params.Nx):
-		lineUp = 0
-
-	lineUp = lineUp + 1
-	lineDown = lineDown + 1
-	line = line + 1
-		
-	column = column + 1
-	if (column - 1 < params.Ny):
-		columnLeft = params.Nx -1
-
-	if (column + 1 > params.Nx):
-		columnRight = 1
 	
+	"""
+	print('spin Lattice')
+	print(spinLattice)
 	
-	print('i,j', spinLattice[line][column])
-	print('i,j-1', spinLattice[line][columnLeft])
-	print('i,j+1', spinLattice[line][columnRight])
-	print('i+1,j', spinLattice[lineUp][column])
-	print('i-1,j', spinLattice[lineDown][column])
-	
-	sys.exit()
-	
-	#test
-	#sx = np.copy(spinLattice[line][columnLeft][2]) - np.copy(spinLattice[line][columnRight][2])
-	#sy = np.copy(spinLattice[lineUp][column][2]) - np.copy(spinLattice[lineDown][column][2])
-	#sz = np.copy(spinLattice[line][columnRight][0]) - np.copy(spinLattice[lineUp][column][1]) - np.copy(spinLattice[line][columnLeft][0]) + np.copy(spinLattice[lineDown][column][1])
+	print('i value', i)
+	print('j value', j)
+	print('j-1', spinLattice[i][j-1])
+	print('j+1', spinLattice[i][j+1])
+	print('i+1', spinLattice[i+1][j])
+	print('i-1', spinLattice[i-1][j])
 
-	#second version
-	#sx = np.copy(spinLattice[lineDown][column][2]) - np.copy(spinLattice[lineUp][column][2])
-	#sy = np.copy(spinLattice[line][columnRight][2]) - np.copy(spinLattice[line][columnLeft][2])
-	#sz = np.copy(spinLattice[lineUp][column][0]) - np.copy(spinLattice[line][columnRight][1]) - np.copy(spinLattice[lineDown][column][0]) + np.copy(spinLattice[line][columnLeft][1])
+	"""
 	
-	# first version
-	sx = np.copy(spinLattice[line][columnLeft][2]) - np.copy(spinLattice[line][columnRight][2])
-	sy = np.copy(spinLattice[lineUp][column][2]) - np.copy(spinLattice[lineDown][column][2])
-	sz = np.copy(spinLattice[line][columnRight][0]) - np.copy(spinLattice[lineUp][column][1]) - np.copy(spinLattice[line][columnLeft][0]) + np.copy(spinLattice[lineDown][column][1])
+	sx = D*np.copy(spinLattice[i][j-1][2]) - np.copy(spinLattice[i][j+1][2])
+	sy = D*np.copy(spinLattice[i+1][j][2]) - np.copy(spinLattice[i-1][j][2])
+	sz = D*np.copy(spinLattice[i][j+1][0]) - np.copy(spinLattice[i+1][j][1]) - np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i-1][j][1])
 
+	print("Beff", np.array([sx,sy,sz]))
+	
 	return D*np.array([sx,sy,sz])

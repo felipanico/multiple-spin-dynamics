@@ -1,4 +1,4 @@
-from typing import final
+from typing import Final, final
 import numpy as np
 import sys
 import plot
@@ -33,9 +33,9 @@ def ini_rand2():
             
             spin = [magx, magy, magz]
 
-            spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-            spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-            spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
+            #spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+            #spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
+            #spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
             magphys[i][j] = spin
 
@@ -59,26 +59,44 @@ Nframes = 16
 magdata=np.empty((Nframes,Nx+2,Ny+2,3),dtype=np.float64)
 magdata[0]=np.copy(mag)
 
+def pbc(x,y,spins):
+    
+    #print(spins)
+    #sys.exit()
+
+    mag2[0][1] = spins[x][y]
+
+    for x in range(Nx):
+        for y in range(Ny + 2):
+            mag2[x+1][y] = spins[x][y]
+        
+    mag2[Nx + 1][1] = spins[0][1]
+
+    print('new PBC')
+    print(mag2)
+    sys.exit()
+    
+    return mag2
+
+#main
 spinPositions = lattice.createSpinPositions()
-initialSpins = magdata[0]
+spins = magdata[0]
 
 #plot.spins2D(initialSpins, spinPositions)
 
-finalSpins = np.zeros((params.Nx,params.Ny,3), np.float64)
+finalSpins = np.zeros((params.Nx + 2,params.Ny + 2,3), np.float64)
 mag2 = np.zeros((Nx+2,Ny+2,3),np.float64)
 magphys2 = mag[1:Nx+1,1:Ny+1,:]
 
-for stepIndex in range(n):
-    spinIndex = 0
-    for x in range(Nx):
-        for y in range(Ny):
-            initialSpins = lattice.createPbc(initialSpins)
-            spin = calc.euler(initialSpins, x, y)
-            initialSpins[x][y] = spin
-            #finalSpins[x][y] = spin
-            #magphys2[x][y] = spin
-            spinIndex = spinIndex + 1
+for step in range(n):
+    spins = np.copy(lattice.createPbc(spins))
+    print(step)
+    if (step == 2):
+        print(spins)
+        sys.exit()
+    
+    spins = np.copy(calc.llgEvolve(spins, finalSpins))        
 
-initialSpins = lattice.createPbc(initialSpins)
-print(initialSpins)
-sys.exit()
+#spins = np.copy(lattice.createPbc(spins))
+print(spins)
+

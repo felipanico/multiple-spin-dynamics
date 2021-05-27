@@ -12,7 +12,7 @@ def individualMagnetization(mx, my, mz):
 	plt.show()
 
 
-def plotTest(magdata):
+def test(magdata):
 	fig, ax = plt.subplots(figsize=(6,6))
 	frame=0
 	interpolation='nearest'
