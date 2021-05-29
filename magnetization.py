@@ -51,22 +51,6 @@ Nframes = 16
 magdata=np.empty((Nframes,Nx+2,Ny+2,3),dtype=np.longdouble)
 magdata[0]=np.copy(mag)
 
-def pbc(x,y,spins):
-    
-    mag2[0][1] = spins[x][y]
-
-    for x in range(Nx):
-        for y in range(Ny + 2):
-            mag2[x+1][y] = spins[x][y]
-        
-    mag2[Nx + 1][1] = spins[0][1]
-
-    print('new PBC')
-    print(mag2)
-    sys.exit()
-    
-    return mag2
-
 #main
 spinPositions = lattice.createSpinPositions()
 spins = magdata[0]
@@ -75,19 +59,13 @@ finalSpins = np.zeros((params.Nx + 2,params.Ny + 2,3), np.float64)
 mag2 = np.zeros((Nx+2,Ny+2,3),np.float64)
 magphys2 = mag[1:Nx+1,1:Ny+1,:]
 
-
 spins = np.copy(lattice.normalization(spins))
 
 for step in range(n):
     spins = np.copy(lattice.createPbc(spins))
-    
-    if (step == 1):
-        break
-    
     spins = np.copy(calc.llgEvolve(spins, finalSpins))
     spins = np.copy(lattice.normalization(spins))        
 
 spins = np.copy(lattice.createPbc(spins))
 
-print(spins)
-
+plot.spins2D(spins)

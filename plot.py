@@ -12,17 +12,16 @@ def individualMagnetization(mx, my, mz):
 	plt.show()
 
 
-def test(magdata):
+def spins2D(magdata):
 	fig, ax = plt.subplots(figsize=(6,6))
-	frame=0
 	interpolation='nearest'
 	cmap=plt.get_cmap('coolwarm_r')
 	Nx = params.Nx
 	Ny = params.Ny
 
-	mx=magdata[frame,1:Nx+1,1:Ny+1,0]
-	my=magdata[frame,1:Nx+1,1:Ny+1,1]
-	mz=magdata[frame,1:Nx+1,1:Ny+1,2]
+	mx=magdata[1:Nx+1,1:Ny+1,0]
+	my=magdata[1:Nx+1,1:Ny+1,1]
+	mz=magdata[1:Nx+1,1:Ny+1,2]
 	
 	im=ax.imshow(mz.T,interpolation=interpolation, cmap = cmap, origin='lower',vmin=-1,vmax=1,zorder=1)
 	width=0.0025
@@ -34,7 +33,8 @@ def test(magdata):
 
 	plt.show()	
 
-def spins2D(spinLattice, spinPositions):
+#@todo: remove - deprecated
+def oldSpins2D(spinLattice, spinPositions):
 	fig, ax = plt.subplots(figsize=(6,6))
 	
 	x = np.zeros(params.spinsTotal)

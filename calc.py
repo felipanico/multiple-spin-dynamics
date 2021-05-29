@@ -1,8 +1,5 @@
 import numpy as np
 import params
-import lattice
-import sys
-from bigfloat import *
 
 def llgEvolve(initialSpins, finalSpins):
 	for i in range(params.Nx):
@@ -40,23 +37,8 @@ def dmInteraction(spinLattice, i, j):
 	result = np.array([0,0,0],  np.longdouble)
 
 	
-	"""
-	print('spin Lattice')
-	print(spinLattice)
-	
-	print('i value', i)
-	print('j value', j)
-	print('j-1', spinLattice[i][j-1])
-	print('j+1', spinLattice[i][j+1])
-	print('i+1', spinLattice[i+1][j])
-	print('i-1', spinLattice[i-1][j])
-
-	"""
-	
 	result[0] = D*(np.copy(spinLattice[i][j-1][2]) - np.copy(spinLattice[i][j+1][2]))
 	result[1] = D*(np.copy(spinLattice[i+1][j][2]) - np.copy(spinLattice[i-1][j][2]))
 	result[2] = D*(np.copy(spinLattice[i][j+1][0]) - np.copy(spinLattice[i+1][j][1]) - np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i-1][j][1]))
 
-	print("Beff", result)
-	
 	return result
