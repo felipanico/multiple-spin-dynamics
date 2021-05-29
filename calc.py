@@ -21,7 +21,7 @@ def llgSolve(spinLattice, i, j):
 
 	spin = np.copy(spinLattice[i][j])
 
-	print("mag old", spin)
+	#print("mag old", spin)
 	
 	SxHeff = np.cross(spin, Heff)
 

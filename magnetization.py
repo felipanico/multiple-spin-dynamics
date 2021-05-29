@@ -27,15 +27,7 @@ def ini_rand2():
             magy = j + 1
             magz = magx + magy
 
-            #magx = random.uniform(-10, 10)
-            #magy = random.uniform(-10, 10) 
-            #magz = random.uniform(-1, 1)
-            
             spin = [magx, magy, magz]
-
-            #spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-            #spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-            #spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
             magphys[i][j] = spin
 
@@ -61,9 +53,6 @@ magdata[0]=np.copy(mag)
 
 def pbc(x,y,spins):
     
-    #print(spins)
-    #sys.exit()
-
     mag2[0][1] = spins[x][y]
 
     for x in range(Nx):
@@ -82,20 +71,19 @@ def pbc(x,y,spins):
 spinPositions = lattice.createSpinPositions()
 spins = magdata[0]
 
-#plot.spins2D(initialSpins, spinPositions)
-
 finalSpins = np.zeros((params.Nx + 2,params.Ny + 2,3), np.float64)
 mag2 = np.zeros((Nx+2,Ny+2,3),np.float64)
 magphys2 = mag[1:Nx+1,1:Ny+1,:]
 
+
+spins = np.copy(lattice.normalization(spins))
+
 for step in range(n):
     spins = np.copy(lattice.createPbc(spins))
-    
-    if (step == 100):
-        break
-    
-    spins = np.copy(calc.llgEvolve(spins, finalSpins))        
+    spins = np.copy(calc.llgEvolve(spins, finalSpins))
+    spins = np.copy(lattice.normalization(spins))        
 
 spins = np.copy(lattice.createPbc(spins))
+
 print(spins)
 
