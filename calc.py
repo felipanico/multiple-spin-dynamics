@@ -21,8 +21,6 @@ def llgSolve(spinLattice, i, j):
 
 	spin = np.copy(spinLattice[i][j])
 
-	#print("mag old", spin)
-	
 	SxHeff = np.cross(spin, Heff)
 
 	SxSxHeff = np.cross(spin, SxHeff)
@@ -35,15 +33,11 @@ def llgSolve(spinLattice, i, j):
 	spin[1] = spin[1] + params.h*result[1]
 	spin[2] = spin[2] + params.h*result[2]
 
-	#spin = np.array([BigFloat(spin[0]), BigFloat(spin[1]), BigFloat(spin[2])])
-
-	#print("Heff", Heff)
-	#print("mag new", spin)
-	
 	return spin
 
 def dmInteraction(spinLattice, i, j):
 	D = params.D
+	result = np.array([0,0,0],  np.longdouble)
 
 	
 	"""
@@ -59,10 +53,10 @@ def dmInteraction(spinLattice, i, j):
 
 	"""
 	
-	sx = D*np.copy(spinLattice[i][j-1][2]) - np.copy(spinLattice[i][j+1][2])
-	sy = D*np.copy(spinLattice[i+1][j][2]) - np.copy(spinLattice[i-1][j][2])
-	sz = D*np.copy(spinLattice[i][j+1][0]) - np.copy(spinLattice[i+1][j][1]) - np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i-1][j][1])
+	result[0] = D*(np.copy(spinLattice[i][j-1][2]) - np.copy(spinLattice[i][j+1][2]))
+	result[1] = D*(np.copy(spinLattice[i+1][j][2]) - np.copy(spinLattice[i-1][j][2]))
+	result[2] = D*(np.copy(spinLattice[i][j+1][0]) - np.copy(spinLattice[i+1][j][1]) - np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i-1][j][1]))
 
-	#print("Beff", np.array([sx,sy,sz]))
+	print("Beff", result)
 	
-	return D*np.array([sx,sy,sz])
+	return result

@@ -12,7 +12,7 @@ spinsTotal = Nx * Ny
 
 J = 1 #mev
 Ms = 1 #saturation magnetisation (?)
-D = 1
+D = 0.18
 B = 0
 
 alpha = 0 #program micro llg

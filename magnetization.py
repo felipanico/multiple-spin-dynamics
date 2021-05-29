@@ -80,6 +80,10 @@ spins = np.copy(lattice.normalization(spins))
 
 for step in range(n):
     spins = np.copy(lattice.createPbc(spins))
+    
+    if (step == 1):
+        break
+    
     spins = np.copy(calc.llgEvolve(spins, finalSpins))
     spins = np.copy(lattice.normalization(spins))        
 
