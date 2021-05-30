@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 import params
 
 def llgEvolve(initialSpins, finalSpins):
@@ -36,7 +37,6 @@ def dmInteraction(spinLattice, i, j):
 	D = params.D
 	result = np.array([0,0,0],  np.longdouble)
 
-	
 	result[0] = D*(np.copy(spinLattice[i][j-1][2]) - np.copy(spinLattice[i][j+1][2]))
 	result[1] = D*(np.copy(spinLattice[i+1][j][2]) - np.copy(spinLattice[i-1][j][2]))
 	result[2] = D*(np.copy(spinLattice[i][j+1][0]) - np.copy(spinLattice[i+1][j][1]) - np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i-1][j][1]))

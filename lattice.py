@@ -41,8 +41,8 @@ def createSpinLattice():
 def createPbc(mag):
     aux = 1
     for i in range(params.Nx):
-        mag[aux][0] = mag[aux][1]
-        mag[aux][params.Ny + 1] = mag[aux][params.Ny]
+        mag[aux][0] = mag[aux][params.Ny]
+        mag[aux][params.Ny + 1] = mag[aux][1]
         aux = aux + 1
 
     aux = 1
