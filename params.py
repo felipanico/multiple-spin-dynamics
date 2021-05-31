@@ -1,13 +1,13 @@
 import numpy as np
 
 #loop
-n = 10000
-h = 0.02
+n = 50000
+h = 0.01
 
 #spins
 spinsNumber = 3
-Nx = 3
-Ny = 3
+Nx = 20
+Ny = 20
 spinsTotal = Nx * Ny
 
 J = 1 #mev

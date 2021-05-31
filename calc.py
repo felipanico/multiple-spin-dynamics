@@ -15,7 +15,8 @@ def llgSolve(spinLattice, i, j):
 	result = np.array([0,0,0],  np.longdouble)
 
 	Hdm = np.copy(dmInteraction(spinLattice, i, j))
-	Heff = params.H + Hdm
+	Hex = np.copy(exchangeInteraction(spinLattice, i, j))
+	Heff = params.H + Hdm + Hex
 
 	spin = np.copy(spinLattice[i][j])
 
@@ -32,6 +33,19 @@ def llgSolve(spinLattice, i, j):
 	spin[2] = spin[2] + params.h*result[2]
 
 	return spin
+
+def exchangeInteraction(spinLattice, i, j):
+	J = params.J
+	result = np.array([0,0,0],  np.longdouble)
+
+	result[0] = J*(np.copy(spinLattice[i-1][j][0]) + np.copy(spinLattice[i+1][j][0]) + np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i][j+1][0]))
+	result[1] = J*(np.copy(spinLattice[i-1][j][1]) + np.copy(spinLattice[i+1][j][1]) + np.copy(spinLattice[i][j-1][1]) + np.copy(spinLattice[i][j+1][1]))
+	result[2] = J*(np.copy(spinLattice[i-1][j][2]) + np.copy(spinLattice[i+1][j][2]) + np.copy(spinLattice[i][j-1][2]) + np.copy(spinLattice[i][j+1][2]))
+
+	#print("Heff", )
+	
+	return result
+
 
 def dmInteraction(spinLattice, i, j):
 	D = params.D

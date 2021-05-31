@@ -23,10 +23,14 @@ mz = np.zeros((Nx*Ny,n-1))
 def ini_rand2():
     for i in range(Nx):
         for j in range(Ny):
-            magx = i + 1
-            magy = j + 1
-            magz = magx + magy
+            #magx = i + 1
+            #magy = j + 1
+            #magz = magx + magy
 
+            magx = random.uniform(-1, 1)
+            magy = random.uniform(-1, 1) 
+            magz = random.uniform(-1, 1)
+            
             spin = [magx, magy, magz]
 
             magphys[i][j] = spin
@@ -65,7 +69,7 @@ for step in range(n):
     spins = np.copy(lattice.createPbc(spins))
     
     #if (step == 0):
-        #break
+    #    break
     
     spins = np.copy(calc.llgEvolve(spins, finalSpins))
     spins = np.copy(lattice.normalization(spins))        
