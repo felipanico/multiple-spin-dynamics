@@ -21,9 +21,9 @@ def LLG(spin, spinLattice, i, j):
 
 	SxSxHeff = np.cross(spin, SxHeff)
 
-	result[0] = SxHeff[0] + params.alpha*SxSxHeff[0]
-	result[1] = SxHeff[1] + params.alpha*SxSxHeff[1]
-	result[2] = SxHeff[2] + params.alpha*SxSxHeff[2]
+	result[0] = SxHeff[0] - params.alpha*SxSxHeff[0]
+	result[1] = SxHeff[1] - params.alpha*SxSxHeff[1]
+	result[2] = SxHeff[2] - params.alpha*SxSxHeff[2]
 
 	return result
 	
@@ -31,14 +31,6 @@ def llgSolve(spinLattice, i, j):
 	spin = np.copy(spinLattice[i][j])
 
 	result = LLG(spin, spinLattice, i, j)
-	
-	## Euler
-	spin[0] = spin[0] + params.h*result[0]
-	spin[1] = spin[1] + params.h*result[1]
-	spin[2] = spin[2] + params.h*result[2]
-
-	return spin
-	
 	
 	k1 = np.copy(result)
     

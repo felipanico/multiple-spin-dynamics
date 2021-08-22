@@ -1,11 +1,11 @@
 import numpy as np
 
 #loop
-n = 1000
-h = 0.001
+n = 50000
+h = 0.01
 
 #spins
-spinsNumber = 20
+spinsNumber = 25
 Nx = spinsNumber
 Ny = spinsNumber
 spinsTotal = Nx * Ny
