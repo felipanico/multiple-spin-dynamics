@@ -6,27 +6,31 @@ import sys
 import params
 from math import exp
 from random import random
+import numpy as np
+import lattice
 
 T = 1
 
-def metropolis(lattice):
+def metropolis(spins):
     energy = 0
     energies = []
 
     for step in range(params.n):
         for i in range(params.Nx):
             for j in range(params.Ny):
-                spin,dE = calc.hamiltonian(lattice, i, j)
+                spins = np.copy(lattice.normalization(spins))
+                spins = np.copy(lattice.createPbc(spins))
+                dE = calc.hamiltonian(spins, i, j)
                 
                 if dE < 0 or random() < exp(-dE/T):
-                    lattice[i,j] = spin
+                    spins[i,j] = calc.vetorialExchange(spins, i, j)
                     energy += dE
                     energies.append(energy)
-    
-    
-    
-    return lattice,energies
 
+    return spins,energies
+
+#T próximo 0
+#L chegando ao fim
 
 def sa(initial_state):
     """Peforms simulated annealing to find a solution"""

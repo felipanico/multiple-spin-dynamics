@@ -19,7 +19,7 @@ mz = np.zeros((Nx*Ny,n-1))
 
 # Lattice from microLLG
 
-mag = np.zeros((Nx+2,Ny+2,3),np.float64) ### including virtual nodes
+mag = np.zeros((Nx+2,Ny+2,3),np.longdouble) ### including virtual nodes
 magphys = mag[1:Nx+1,1:Ny+1,:] ### physical nodes
 magphys = lattice.iniRand(magphys)
 
@@ -42,14 +42,14 @@ magdata[0]=np.copy(mag)
 spinPositions = lattice.createSpinPositions()
 spins = magdata[0]
 
-finalSpins = np.zeros((params.Nx + 2,params.Ny + 2,3), np.float64)
-mag2 = np.zeros((Nx+2,Ny+2,3),np.float64)
+finalSpins = np.zeros((params.Nx + 2,params.Ny + 2,3), np.longdouble)
+mag2 = np.zeros((Nx+2,Ny+2,3),np.longdouble)
 magphys2 = mag[1:Nx+1,1:Ny+1,:]
 
 spins = np.copy(lattice.normalization(spins))
 
 if (params.minimize):
-    lattice, energies = monte_carlo.metropolis(spins)
+    spins, energies = monte_carlo.metropolis(spins)
 else:    
     for step in range(n):
         spins = np.copy(lattice.createPbc(spins))
@@ -58,4 +58,7 @@ else:
 
     spins = np.copy(lattice.createPbc(spins))
 
+
+#print(spins)
+#sys.exit()
 plot.spins2D(spins)
