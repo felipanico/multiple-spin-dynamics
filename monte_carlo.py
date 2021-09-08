@@ -14,16 +14,23 @@ T = 1
 def metropolis(spins):
     energy = 0
     energies = []
+    finalSpins = np.zeros((params.Nx + 2,params.Ny + 2,3))
 
     for step in range(params.n):
         for i in range(params.Nx):
             for j in range(params.Ny):
-                spins = np.copy(lattice.normalization(spins))
-                spins = np.copy(lattice.createPbc(spins))
-                dE = calc.hamiltonian(spins, i, j)
+                energy1 = calc.hamiltonian(spins, i, j)
+                oldSpin = spins[i,j]
+
+                i = np.random.randint(0, params.Nx +1)
+                j = np.random.randint(0, params.Ny +1)
                 
+                energy2 = calc.hamiltonian(spins, i, j)
+
+                dE = energy2 - energy1
+
                 if dE < 0 or random() < exp(-dE/T):
-                    spins[i,j] = calc.vetorialExchange(spins, i, j)
+                    spins[i,j] = oldSpin
                     energy += dE
                     energies.append(energy)
 

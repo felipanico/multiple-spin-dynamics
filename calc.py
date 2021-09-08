@@ -57,7 +57,7 @@ def llgSolve(spinLattice, i, j):
 def hamiltonian(spinLattice, i, j):
 	Hex = np.copy(scalarExchange(spinLattice, i, j))
 
-	return Hex
+	return Hex + params.B
 
 def scalarExchange(spinLattice, i, j):
 	s1_s0 =	np.dot(spinLattice[i,j], spinLattice[i-1,j])
@@ -65,7 +65,7 @@ def scalarExchange(spinLattice, i, j):
 	s1_s3 =	np.dot(spinLattice[i,j], spinLattice[i,j+1])
 	s1_s4 =	np.dot(spinLattice[i,j], spinLattice[i,j-1])
 
-	return -params.J*(s1_s0 + s1_s2 + s1_s3 + s1_s4) / 2
+	return params.J*(s1_s0 + s1_s2 + s1_s3 + s1_s4) / 2
 	
 def vetorialExchange(spinLattice, i, j):
 	result = np.array([0,0,0],  np.longdouble)
