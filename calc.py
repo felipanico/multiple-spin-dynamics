@@ -12,8 +12,8 @@ def llgEvolve(initialSpins, finalSpins):
 
 def LLG(spin, spinLattice, i, j):
 	result = np.array([0,0,0],  np.longdouble)
-	Hdm = np.copy(dmInteraction(spinLattice, i, j))
-	Hex = np.copy(exchangeInteraction(spinLattice, i, j))
+	Hdm = np.copy(vetorialDm(spinLattice, i, j))
+	Hex = np.copy(vetorialExchange(spinLattice, i, j))
 	
 	Heff = params.H + Hex + Hdm
 
@@ -54,18 +54,30 @@ def llgSolve(spinLattice, i, j):
 
 	return spin
 
-def exchangeInteraction(spinLattice, i, j):
-	J = params.J
+def hamiltonian(spinLattice, i, j):
+	Hex = np.copy(scalarExchange(spinLattice, i, j))
+
+	return Hex + params.B
+
+def scalarExchange(spinLattice, i, j):
+	s1_s0 =	np.dot(spinLattice[i,j], spinLattice[i-1,j])
+	s1_s2 =	np.dot(spinLattice[i,j], spinLattice[i+1,j])
+	s1_s3 =	np.dot(spinLattice[i,j], spinLattice[i,j+1])
+	s1_s4 =	np.dot(spinLattice[i,j], spinLattice[i,j-1])
+
+	return params.J*(s1_s0 + s1_s2 + s1_s3 + s1_s4) / 2
+	
+def vetorialExchange(spinLattice, i, j):
 	result = np.array([0,0,0],  np.longdouble)
 
-	result[0] = J*(np.copy(spinLattice[i-1][j][0]) + np.copy(spinLattice[i+1][j][0]) + np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i][j+1][0]))
-	result[1] = J*(np.copy(spinLattice[i-1][j][1]) + np.copy(spinLattice[i+1][j][1]) + np.copy(spinLattice[i][j-1][1]) + np.copy(spinLattice[i][j+1][1]))
-	result[2] = J*(np.copy(spinLattice[i-1][j][2]) + np.copy(spinLattice[i+1][j][2]) + np.copy(spinLattice[i][j-1][2]) + np.copy(spinLattice[i][j+1][2]))
+	result[0] = params.J*(np.copy(spinLattice[i-1][j][0]) + np.copy(spinLattice[i+1][j][0]) + np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i][j+1][0]))
+	result[1] = params.J*(np.copy(spinLattice[i-1][j][1]) + np.copy(spinLattice[i+1][j][1]) + np.copy(spinLattice[i][j-1][1]) + np.copy(spinLattice[i][j+1][1]))
+	result[2] = params.J*(np.copy(spinLattice[i-1][j][2]) + np.copy(spinLattice[i+1][j][2]) + np.copy(spinLattice[i][j-1][2]) + np.copy(spinLattice[i][j+1][2]))
 
 	return result
 
 
-def dmInteraction(spinLattice, i, j):
+def vetorialDm(spinLattice, i, j):
 	D = params.D
 	result = np.array([0,0,0],  np.longdouble)
 

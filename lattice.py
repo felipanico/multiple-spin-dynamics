@@ -70,3 +70,15 @@ def normalization(spins):
             spins[i+1][j+1] = np.copy(spin)
 
     return spins
+
+def iniRand(magphys):
+    for i in range(params.Nx):
+        for j in range(params.Ny):
+            magx = random.uniform(-1, 1)
+            magy = random.uniform(-1, 1) 
+            magz = random.uniform(-1, 1)
+            
+            spin = [magx, magy, magz]
+
+            magphys[i][j] = spin
+    return magphys
