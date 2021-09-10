@@ -9,22 +9,20 @@ from random import random
 import numpy as np
 import lattice
 
-T = 1
+T = 0.5
 
 def metropolis(spins):
     energy = 0
     energies = []
-    finalSpins = np.zeros((params.Nx + 2,params.Ny + 2,3))
-
+    
     for step in range(params.n):
         for i in range(params.Nx):
             for j in range(params.Ny):
                 energy1 = calc.hamiltonian(spins, i, j)
                 oldSpin = spins[i,j]
 
-                i = np.random.randint(0, params.Nx +1)
-                j = np.random.randint(0, params.Ny +1)
-                
+                i = np.random.randint(0, params.Nx + 1)
+                j = np.random.randint(0, params.Ny + 1)
                 energy2 = calc.hamiltonian(spins, i, j)
 
                 dE = energy2 - energy1
@@ -36,43 +34,37 @@ def metropolis(spins):
 
     return spins,energies
 
-#T próximo 0
-#L chegando ao fim
-
-def sa(initial_state):
-    """Peforms simulated annealing to find a solution"""
-    initial_temp = 90
-    final_temp = .1
-    alpha = 0.01
+def sa(spins):
+    currentTemp = 50
+    finalTemp = .1
+    decrement = 0.01
     
-    current_temp = initial_temp
+    energy = 0
+    energies = []
 
-    # Start by initializing the current state with the initial state
-    current_state = initial_state
-    solution = current_state
+    while currentTemp > finalTemp:
+        print('current temp: ', currentTemp)
+        for i in range(params.Nx):
+            for j in range(params.Ny):
+                spins, energy = calcEnergiesForSa(spins, i, j, energy, currentTemp)
+                energies.append(energy)
+        
+        currentTemp -= decrement
 
-    while current_temp > final_temp:
-        neighbor = random.choice(get_neighbors())
+    return spins,energies
 
-        # Check if neighbor is best so far
-        cost_diff = get_cost(current_state) - get_cost(neighbor)
+def calcEnergiesForSa(spins, i, j, energy, T):
+    energy1 = calc.hamiltonian(spins, i, j)
+    oldSpin = spins[i,j]
 
-        # if the new solution is better, accept it
-        if cost_diff > 0:
-            solution = neighbor
-        # if the new solution is not better, accept it with a probability of e^(-cost/temp)
-        else:
-            if random.uniform(0, 1) < math.exp(-cost_diff / current_temp):
-                solution = neighbor
-        # decrement the temperature
-        current_temp -= alpha
+    i = np.random.randint(0, params.Nx + 1)
+    j = np.random.randint(0, params.Ny + 1)
+    energy2 = calc.hamiltonian(spins, i, j)
 
-    return solution
+    dE = energy2 - energy1
 
-def get_cost(state):
-    """Calculates cost of the argument state for your solution."""
-    raise NotImplementedError
+    if dE < 0 or random() < exp(-dE/T):
+        spins[i,j] = oldSpin
+        energy += dE
     
-def get_neighbors(state):
-    """Returns neighbors of the argument state for your solution."""
-    raise NotImplementedError
+    return spins, energy

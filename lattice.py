@@ -82,3 +82,19 @@ def iniRand(magphys):
 
             magphys[i][j] = spin
     return magphys
+
+def sphericalRand():
+    """
+    Generate random unit vector in cartesian coordinates
+    :return: [x, y, z] the unit vector
+    """
+
+    phi = np.random.uniform(0, 2 * np.pi)
+    u = np.random.uniform(0, 1)
+    theta = np.arccos(2 * u - 1)
+    
+    x = np.sin(theta) * np.cos(phi)
+    y = np.sin(theta) * np.sin(phi)
+    z = np.cos(theta)
+    
+    return np.array([x, y, z])

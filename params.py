@@ -1,17 +1,16 @@
 import numpy as np
 
 #loop
-n = 10000
+n = 100
 h = 0.01
 
 #spins
-spinsNumber = 40
+spinsNumber = 10
 Nx = spinsNumber
 Ny = spinsNumber
 spinsTotal = Nx * Ny
 
 J = 1 #mev
-Ms = 1 #saturation magnetisation (?)
 D = 0.18
 B = 1
 

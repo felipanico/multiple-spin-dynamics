@@ -56,8 +56,9 @@ def llgSolve(spinLattice, i, j):
 
 def hamiltonian(spinLattice, i, j):
 	Hex = np.copy(scalarExchange(spinLattice, i, j))
+	Hdm = np.copy(scalarDm(spinLattice, i, j))
 
-	return Hex + params.B
+	return -Hex - params.B
 
 def scalarExchange(spinLattice, i, j):
 	s1_s0 =	np.dot(spinLattice[i,j], spinLattice[i-1,j])
@@ -76,6 +77,22 @@ def vetorialExchange(spinLattice, i, j):
 
 	return result
 
+
+def scalarDm(spinLattice, i, j):
+	xdir = [1,0,0]
+	ydir = [0,1,0]
+	
+	s1xs2 =	np.cross(spinLattice[i,j], spinLattice[i+1,j])
+	s1xs0 =	np.cross(spinLattice[i,j], spinLattice[i-1,j])
+	
+	xspins = np.dot(s1xs2 - s1xs0, xdir)
+	
+	s1xs4 =	np.cross(spinLattice[i,j], spinLattice[i,j+1])
+	s1xs3 =	np.cross(spinLattice[i,j], spinLattice[i,j-1])
+	
+	yspins = np.dot(s1xs4 - s1xs3, ydir)
+
+	return params.D*(xspins - yspins) / 2
 
 def vetorialDm(spinLattice, i, j):
 	D = params.D

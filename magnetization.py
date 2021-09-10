@@ -49,7 +49,7 @@ magphys2 = mag[1:Nx+1,1:Ny+1,:]
 spins = np.copy(lattice.normalization(spins))
 
 if (params.minimize):
-    lattice, energies = monte_carlo.metropolis(spins)
+    lattice, energies = monte_carlo.sa(spins)
 else:    
     for step in range(n):
         spins = np.copy(lattice.createPbc(spins))
@@ -58,6 +58,4 @@ else:
 
     spins = np.copy(lattice.createPbc(spins))
 
-
-print(spins)
 plot.spins2D(spins)
