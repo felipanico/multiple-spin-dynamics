@@ -56,9 +56,13 @@ def llgSolve(spinLattice, i, j):
 
 def hamiltonian(spinLattice, i, j):
 	Hex = np.copy(scalarExchange(spinLattice, i, j))
+	Hz = np.copy(scalarZeeman(spinLattice, i, j))
 	Hdm = np.copy(scalarDm(spinLattice, i, j))
+	
+	return Hex + Hz
 
-	return -Hex - params.B
+def scalarZeeman(spinLattice, i, j):
+    return np.dot(params.H, spinLattice[i,j])	
 
 def scalarExchange(spinLattice, i, j):
 	s1_s0 =	np.dot(spinLattice[i,j], spinLattice[i-1,j])

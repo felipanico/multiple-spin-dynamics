@@ -2,6 +2,8 @@ import numpy as np
 import sys
 import random
 import params
+import math
+from random import random
 
 def createSpinPositions():
     positions = np.zeros([params.spinsTotal, 3])
@@ -74,9 +76,9 @@ def normalization(spins):
 def iniRand(magphys):
     for i in range(params.Nx):
         for j in range(params.Ny):
-            magx = random.uniform(-1, 1)
-            magy = random.uniform(-1, 1) 
-            magz = random.uniform(-1, 1)
+            magx = np.random.uniform(-1, 1)
+            magy = np.random.uniform(-1, 1) 
+            magz = np.random.uniform(-1, 1)
             
             spin = [magx, magy, magz]
 
@@ -98,3 +100,47 @@ def sphericalRand():
     z = np.cos(theta)
     
     return np.array([x, y, z])
+
+
+def kick(lattice, T):
+    for i in range(params.Nx + 1):
+        for j in range(params.Ny + 1):
+            lattice[i,j][0] = np.copy(lattice[i,j][0]) + math.sqrt(T)*(random() - 0.5)
+            lattice[i,j][1] = np.copy(lattice[i,j][1]) + math.sqrt(T)*(random() - 0.5) 
+            lattice[i,j][2] = np.copy(lattice[i,j][2]) + math.sqrt(T)*(random() - 0.5)
+
+            magx = lattice[i,j][0]
+            magy = lattice[i,j][1]
+            magz = lattice[i,j][2]
+
+            lattice[i,j][0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
+            lattice[i,j][1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
+            lattice[i,j][2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
+
+    return lattice            
+
+def randomWithPBC():
+    
+    Nx = params.Nx
+    Ny = params.Ny
+    
+    mag = np.zeros((Nx+2,Ny+2,3)) ### including virtual nodes
+    magphys = mag[1:Nx+1,1:Ny+1,:] ### physical nodes
+    magphys = iniRand(magphys)
+
+    mag[0,1:Ny+1,:]=magphys[1,:,:]
+    mag[Nx+1,1:Ny+1,:]=magphys[Nx-1,:,:]
+
+    mag[0:Nx,0,:]=magphys[:,0,:]
+    mag[1:Nx+1,Ny+1,:]=magphys[:,Ny-1,:]
+
+    mag[0,0,:]=0.
+    mag[0,Ny+1,:]=0.
+    mag[Nx+1,0,:]=0.
+    mag[Nx+1,Ny+1,:]=0.
+
+    Nframes = 16
+    magdata=np.empty((Nframes,Nx+2,Ny+2,3))
+    magdata[0]=np.copy(mag)
+
+    return magdata[0]
