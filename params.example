@@ -19,4 +19,4 @@ gamma = 0
 
 H = np.array([0,0,B])
 
-minimize = True
+minimize = False
