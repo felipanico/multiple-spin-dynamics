@@ -13,14 +13,20 @@ Nx = params.Nx
 Ny = params.Ny
 
 np.random.seed(0)
-spins = lattice.createSpinLattice()
 
 #@TODO LIST
-# 1. read spins from file
-# 2. plot readed spins
-# 3. fix boundary conditions
-# 4. add spin transfer torque
-# 5. move skyrmion
+# 1. fix boundary conditions
+# 2. add spin transfer torque
+# 3. move skyrmion
+
+if (params.random):
+    spins = lattice.createSpinLattice()
+else:
+    spins = lattice.readSpinLattice('data/input.dat')
+
+print(spins)
+plot.file(spins)
+sys.exit()
 
 if (params.minimize):
     #Monte Carlo

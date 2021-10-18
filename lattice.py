@@ -2,6 +2,7 @@ import numpy as np
 import sys
 import random
 import params
+import pandas as pd
 import math
 from random import random
 
@@ -85,23 +86,6 @@ def iniRand(magphys):
             magphys[i][j] = spin
     return magphys
 
-def sphericalRand():
-    """
-    Generate random unit vector in cartesian coordinates
-    :return: [x, y, z] the unit vector
-    """
-
-    phi = np.np.random.uniform(0, 2 * np.pi)
-    u = np.np.random.uniform(0, 1)
-    theta = np.arccos(2 * u - 1)
-    
-    x = np.sin(theta) * np.cos(phi)
-    y = np.sin(theta) * np.sin(phi)
-    z = np.cos(theta)
-    
-    return np.array([x, y, z])
-
-
 def kick(lattice, T):
     for i in range(params.Nx):
         for j in range(params.Ny):
@@ -117,30 +101,7 @@ def kick(lattice, T):
             lattice[i,j][1] = magy / np.sqrt(magx**2.0 + magy**2.0 + magz**2.0)
             lattice[i,j][2] = magz / np.sqrt(magx**2.0 + magy**2.0 + magz**2.0)
 
-    return lattice            
+    return lattice
 
-def randomWithPBC():
-    
-    Nx = params.Nx
-    Ny = params.Ny
-    
-    mag = np.zeros((Nx+2,Ny+2,3)) ### including virtual nodes
-    magphys = mag[1:Nx+1,1:Ny+1,:] ### physical nodes
-    magphys = iniRand(magphys)
-
-    mag[0,1:Ny+1,:]=magphys[1,:,:]
-    mag[Nx+1,1:Ny+1,:]=magphys[Nx-1,:,:]
-
-    mag[0:Nx,0,:]=magphys[:,0,:]
-    mag[1:Nx+1,Ny+1,:]=magphys[:,Ny-1,:]
-
-    mag[0,0,:]=0.
-    mag[0,Ny+1,:]=0.
-    mag[Nx+1,0,:]=0.
-    mag[Nx+1,Ny+1,:]=0.
-
-    Nframes = 16
-    magdata=np.empty((Nframes,Nx+2,Ny+2,3))
-    magdata[0]=np.copy(mag)
-
-    return magdata[0]
+def readSpinLattice(path):
+    return pd.read_table(path, header=None)

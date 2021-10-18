@@ -1,10 +1,8 @@
 from hashlib import new
 from typing import final
-from plot import oldSpins2D
 import random
 import math
 import calc
-import sys
 import params
 from math import exp
 import numpy as np
