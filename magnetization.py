@@ -13,51 +13,21 @@ Nx = params.Nx
 Ny = params.Ny
 
 np.random.seed(0)
-'''
-# Create initial values and running calculation
-mx = np.zeros((Nx*Ny,n-1))
-my = np.zeros((Nx*Ny,n-1))
-mz = np.zeros((Nx*Ny,n-1))
-
-# Lattice from microLLG
-
-mag = np.zeros((Nx+2,Ny+2,3)) ### including virtual nodes
-magphys = mag[1:Nx+1,1:Ny+1,:] ### physical nodes
-magphys = lattice.iniRand(magphys)
-
-mag[0,1:Ny+1,:]=magphys[1,:,:]
-mag[Nx+1,1:Ny+1,:]=magphys[Nx-1,:,:]
-
-mag[0:Nx,0,:]=magphys[:,0,:]
-mag[1:Nx+1,Ny+1,:]=magphys[:,Ny-1,:]
-
-mag[0,0,:]=0.
-mag[0,Ny+1,:]=0.
-mag[Nx+1,0,:]=0.
-mag[Nx+1,Ny+1,:]=0.
-
-Nframes = 16
-magdata=np.empty((Nframes,Nx+2,Ny+2,3))
-magdata[0]=np.copy(mag)
-
-#main
-spinPositions = lattice.createSpinPositions()
-spins = magdata[0]
-
-finalSpins = np.zeros((params.Nx + 2,params.Ny + 2,3))
-mag2 = np.zeros((Nx+2,Ny+2,3))
-magphys2 = mag[1:Nx+1,1:Ny+1,:]
-
-spins = np.copy(lattice.normalization(spins))
-'''
-
 spins = lattice.createSpinLattice()
-#print(spins)
-#plot.spins2D(spins)
+
+#@TODO LIST
+# 1. read spins from file
+# 2. plot readed spins
+# 3. fix boundary conditions
+# 4. add spin transfer torque
+# 5. move skyrmion
 
 if (params.minimize):
+    #Monte Carlo
     spins = np.copy(monte_carlo.metropolis(spins))
 else:    
+    #LLG
+    finalSpins = np.zeros((params.Nx + 2,params.Ny + 2,3))
     for step in range(n):
         spins = np.copy(lattice.createPbc(spins))
         spins = np.copy(calc.llgEvolve(spins, finalSpins))
@@ -65,5 +35,4 @@ else:
 
     spins = np.copy(lattice.createPbc(spins))
 
-#print(spins)
 plot.spins2DT(spins)
