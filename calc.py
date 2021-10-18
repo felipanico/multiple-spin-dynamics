@@ -28,7 +28,7 @@ def LLG(spin, spinLattice, i, j):
 	return result
 	
 def llgSolve(spinLattice, i, j):
-	spin = np.copy(spinLattice[i][j])
+    	spin = np.copy(spinLattice[i][j])
 
 	result = LLG(spin, spinLattice, i, j)
 	
