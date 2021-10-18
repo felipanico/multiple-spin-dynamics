@@ -1,5 +1,3 @@
-from typing import final
-from matplotlib import set_loglevel
 import numpy as np
 import sys
 import plot
@@ -14,6 +12,8 @@ h = params.h
 Nx = params.Nx
 Ny = params.Ny
 
+np.random.seed(0)
+'''
 # Create initial values and running calculation
 mx = np.zeros((Nx*Ny,n-1))
 my = np.zeros((Nx*Ny,n-1))
@@ -49,12 +49,14 @@ mag2 = np.zeros((Nx+2,Ny+2,3))
 magphys2 = mag[1:Nx+1,1:Ny+1,:]
 
 spins = np.copy(lattice.normalization(spins))
+'''
 
+spins = lattice.createSpinLattice()
 #print(spins)
 #plot.spins2D(spins)
 
 if (params.minimize):
-    spins = np.copy(monte_carlo.sa(spins))
+    spins = np.copy(monte_carlo.metropolis(spins))
 else:    
     for step in range(n):
         spins = np.copy(lattice.createPbc(spins))
@@ -63,5 +65,5 @@ else:
 
     spins = np.copy(lattice.createPbc(spins))
 
-print(spins)
-plot.spins2D(spins)
+#print(spins)
+plot.spins2DT(spins)

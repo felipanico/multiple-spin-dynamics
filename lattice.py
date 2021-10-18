@@ -25,14 +25,9 @@ def createSpinLattice():
     
     for i in range(params.Nx):
         for j in range(params.Ny):
-            #magx = random.uniform(-1, 1)
-            #magy = random.uniform(-1, 1) 
-            #magz = random.uniform(-1, 1)
-
-            #test
-            magx = i +1
-            magy = j+1
-            magz = magx + magy
+            magx = np.random.uniform(-10, 10)
+            magy = np.random.uniform(-10, 10) 
+            magz = np.random.uniform(-1, 1)
 
             spin = [magx, magy, magz]
 
@@ -81,9 +76,9 @@ def normalization(spins):
 def iniRand(magphys):
     for i in range(params.Nx):
         for j in range(params.Ny):
-            magx = np.random.uniform(-1, 1)
-            magy = np.random.uniform(-1, 1) 
-            magz = np.random.uniform(-1, 1)
+            magx = np.np.random.uniform(-1, 1)
+            magy = np.np.random.uniform(-1, 1) 
+            magz = np.np.random.uniform(-1, 1)
             
             spin = [magx, magy, magz]
 
@@ -96,8 +91,8 @@ def sphericalRand():
     :return: [x, y, z] the unit vector
     """
 
-    phi = np.random.uniform(0, 2 * np.pi)
-    u = np.random.uniform(0, 1)
+    phi = np.np.random.uniform(0, 2 * np.pi)
+    u = np.np.random.uniform(0, 1)
     theta = np.arccos(2 * u - 1)
     
     x = np.sin(theta) * np.cos(phi)
@@ -108,19 +103,19 @@ def sphericalRand():
 
 
 def kick(lattice, T):
-    for i in range(params.Nx + 1):
-        for j in range(params.Ny + 1):
-            lattice[i,j][0] = np.copy(lattice[i,j][0]) + math.sqrt(T)*(random() - 0.5)
-            lattice[i,j][1] = np.copy(lattice[i,j][1]) + math.sqrt(T)*(random() - 0.5) 
-            lattice[i,j][2] = np.copy(lattice[i,j][2]) + math.sqrt(T)*(random() - 0.5)
+    for i in range(params.Nx):
+        for j in range(params.Ny):
+            lattice[i,j][0] = np.copy(lattice[i,j][0]) + math.sqrt(T)*(2.0 * random() - 1.0)
+            lattice[i,j][1] = np.copy(lattice[i,j][1]) + math.sqrt(T)*(2.0 * random() - 1.0) 
+            lattice[i,j][2] = np.copy(lattice[i,j][2]) + math.sqrt(T)*(2.0 * random() - 1.0)
 
             magx = lattice[i,j][0]
             magy = lattice[i,j][1]
             magz = lattice[i,j][2]
 
-            lattice[i,j][0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-            lattice[i,j][1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-            lattice[i,j][2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
+            lattice[i,j][0] = magx / np.sqrt(magx**2.0 + magy**2.0 + magz**2.0)
+            lattice[i,j][1] = magy / np.sqrt(magx**2.0 + magy**2.0 + magz**2.0)
+            lattice[i,j][2] = magz / np.sqrt(magx**2.0 + magy**2.0 + magz**2.0)
 
     return lattice            
 
