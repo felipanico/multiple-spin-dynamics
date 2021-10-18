@@ -1,6 +1,7 @@
 import numpy as np
 
-n = 1000
+#loop
+n = 10000
 h = 0.01
 
 spinsNumber = 10
@@ -8,12 +9,13 @@ Nx = 1
 Ny = 10
 spinsTotal = Nx * Ny
 
-J = 0 #mev
-Ms = 1 #saturation magnetisation (?)
-D = 1
-B = 0
+J = 1 #mev
+D = 0.18
+B = 10
 
-alpha = 1
-gamma = 3.5
+alpha = 0.04
+gamma = 0
 
 H = np.array([0,0,B])
+
+minimize = False

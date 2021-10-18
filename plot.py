@@ -11,7 +11,30 @@ def individualMagnetization(mx, my, mz):
 	plt.title('Magnetization')
 	plt.show()
 
-def spins2D(spinLattice, spinPositions):
+
+def spins2D(magdata):
+	fig, ax = plt.subplots(figsize=(6,6))
+	interpolation='nearest'
+	cmap=plt.get_cmap('coolwarm_r')
+	Nx = params.Nx
+	Ny = params.Ny
+
+	mx=magdata[1:Nx+1,1:Ny+1,0]
+	my=magdata[1:Nx+1,1:Ny+1,1]
+	mz=magdata[1:Nx+1,1:Ny+1,2]
+	
+	im=ax.imshow(mz.T,interpolation=interpolation, cmap = cmap, origin='lower',vmin=-1,vmax=1,zorder=1)
+	width=0.0025
+	scale=2.0
+
+	Q = ax.quiver(mx.T,my.T,pivot='mid',zorder=2,width=width, scale=scale, angles='xy', scale_units='xy')
+
+	fig.colorbar(im, label=r'$m_z$',orientation='vertical')
+
+	plt.show()	
+
+#@todo: remove - deprecated
+def oldSpins2D(spinLattice, spinPositions):
 	fig, ax = plt.subplots(figsize=(6,6))
 
 	x = np.zeros(params.spinsTotal)
@@ -37,8 +60,13 @@ def spins2D(spinLattice, spinPositions):
 				
 	sz = sz.reshape(params.spinsNumber, -1)
 	"""
+
+	#mx=magdata[-1,1:Nx+1,1:Ny+1,0]
+	#my=magdata[-1,1:Nx+1,1:Ny+1,1]
+	#mz=magdata[-1,1:Nx+1,1:Ny+1,2]
 	
-	#test - plot one dimensional grid
+	#@todo: remove this
+	#print(spinLattice)
 	sx = spinLattice[:,:,0]
 	sy = spinLattice[:,:,1]
 	sz = spinLattice[:,:,2]

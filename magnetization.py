@@ -6,6 +6,7 @@ import plot
 import lattice
 import calc
 import params
+import monte_carlo
 
 # Parameters
 n = params.n
@@ -18,22 +19,49 @@ mx = np.zeros((Nx*Ny,n-1))
 my = np.zeros((Nx*Ny,n-1))
 mz = np.zeros((Nx*Ny,n-1))
 
+# Lattice from microLLG
+
+mag = np.zeros((Nx+2,Ny+2,3)) ### including virtual nodes
+magphys = mag[1:Nx+1,1:Ny+1,:] ### physical nodes
+magphys = lattice.iniRand(magphys)
+
+mag[0,1:Ny+1,:]=magphys[1,:,:]
+mag[Nx+1,1:Ny+1,:]=magphys[Nx-1,:,:]
+
+mag[0:Nx,0,:]=magphys[:,0,:]
+mag[1:Nx+1,Ny+1,:]=magphys[:,Ny-1,:]
+
+mag[0,0,:]=0.
+mag[0,Ny+1,:]=0.
+mag[Nx+1,0,:]=0.
+mag[Nx+1,Ny+1,:]=0.
+
+Nframes = 16
+magdata=np.empty((Nframes,Nx+2,Ny+2,3))
+magdata[0]=np.copy(mag)
+
+#main
 spinPositions = lattice.createSpinPositions()
-initialSpins = lattice.createSpinLattice()
+spins = magdata[0]
 
-plot.spins2D(initialSpins, spinPositions)
-finalSpins = np.zeros((params.Nx,params.Ny,3), np.float64)
+finalSpins = np.zeros((params.Nx + 2,params.Ny + 2,3))
+mag2 = np.zeros((Nx+2,Ny+2,3))
+magphys2 = mag[1:Nx+1,1:Ny+1,:]
 
-for stepIndex in range(n-1):
-    spinIndex = 0
-    for x in range(Nx):
-        for y in range(Ny):
-            spin = calc.euler(initialSpins, x, y)
-            finalSpins[x][y] = spin
-            mx[spinIndex] = spin[0]
-            my[spinIndex] = spin[1]
-            mz[spinIndex] = spin[2]
-            spinIndex = spinIndex + 1
+spins = np.copy(lattice.normalization(spins))
 
-plot.spins2D(finalSpins, spinPositions)
-#plot.spins3D(stepIndex, params.spinsTotal, mx,my,mz)
+#print(spins)
+#plot.spins2D(spins)
+
+if (params.minimize):
+    spins = np.copy(monte_carlo.sa(spins))
+else:    
+    for step in range(n):
+        spins = np.copy(lattice.createPbc(spins))
+        spins = np.copy(calc.llgEvolve(spins, finalSpins))
+        spins = np.copy(lattice.normalization(spins))        
+
+    spins = np.copy(lattice.createPbc(spins))
+
+print(spins)
+plot.spins2D(spins)
