@@ -13,6 +13,12 @@ python -m pip install math
 python -m pip install matplotlib
 ```
 
+# Set params
+
+```
+cp params.example params.py
+```
+
 # Fix plot graph in wsl2
 
 - Install xLaunch
