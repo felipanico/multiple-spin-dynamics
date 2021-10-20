@@ -104,4 +104,16 @@ def kick(lattice, T):
     return lattice
 
 def readSpinLattice(path):
-    return pd.read_table(path, header=None)
+    spins = pd.read_table(path, header=None)
+    lines = len(spins)
+    columns = 3 * lines #number of cordinates
+    spinsLattice = np.zeros((params.Nx,params.Ny,3), np.float64)
+
+    for x in range(lines):
+        y = 0
+        for j in range(0, columns, 3):
+            if (y == lines): break
+            spin = [spins.T[x][j],spins.T[x][j+1],spins.T[x][j+2]]
+            spinsLattice[x][y] = spin
+            y = y + 1
+    return spinsLattice

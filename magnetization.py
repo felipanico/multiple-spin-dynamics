@@ -24,10 +24,6 @@ if (params.random):
 else:
     spins = lattice.readSpinLattice('data/input.dat')
 
-print(spins)
-plot.file(spins)
-sys.exit()
-
 if (params.minimize):
     #Monte Carlo
     spins = np.copy(monte_carlo.metropolis(spins))
@@ -41,4 +37,5 @@ else:
 
     spins = np.copy(lattice.createPbc(spins))
 
+print(spins)
 plot.spins2DT(spins)
