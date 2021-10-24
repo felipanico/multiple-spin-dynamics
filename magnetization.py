@@ -29,13 +29,9 @@ if (params.minimize):
     spins = np.copy(monte_carlo.metropolis(spins))
 else:    
     #LLG
-    finalSpins = np.zeros((params.Nx + 2,params.Ny + 2,3))
+    finalSpins = np.zeros((params.Nx, params.Ny,3))
     for step in range(n):
-        spins = np.copy(lattice.createPbc(spins))
         spins = np.copy(calc.llgEvolve(spins, finalSpins))
         spins = np.copy(lattice.normalization(spins))        
 
-    spins = np.copy(lattice.createPbc(spins))
-
-print(spins)
 plot.spins2DT(spins)

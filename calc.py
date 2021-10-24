@@ -1,12 +1,13 @@
 import numpy as np
 import sys
 import params
+import lattice
 
 def llgEvolve(initialSpins, finalSpins):
 	for i in range(params.Nx):
 		for j in range(params.Ny):
-			result = llgSolve(initialSpins, i + 1,j + 1)
-			finalSpins[i + 1][j + 1] = np.copy(result)
+			result = llgSolve(initialSpins, i, j)
+			finalSpins[i][j] = np.copy(result)
 			
 	return finalSpins
 
@@ -85,9 +86,11 @@ def scalarExchange(spinLattice, i, j):
 def vetorialExchange(spinLattice, i, j):
 	result = np.array([0,0,0],  np.longdouble)
 
-	result[0] = params.J*(np.copy(spinLattice[i-1][j][0]) + np.copy(spinLattice[i+1][j][0]) + np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i][j+1][0]))
-	result[1] = params.J*(np.copy(spinLattice[i-1][j][1]) + np.copy(spinLattice[i+1][j][1]) + np.copy(spinLattice[i][j-1][1]) + np.copy(spinLattice[i][j+1][1]))
-	result[2] = params.J*(np.copy(spinLattice[i-1][j][2]) + np.copy(spinLattice[i+1][j][2]) + np.copy(spinLattice[i][j-1][2]) + np.copy(spinLattice[i][j+1][2]))
+	x1,x2,y1,y2 = lattice.createPBC(i,j)
+	
+	result[0] = params.J*(np.copy(spinLattice[x1][j][0]) + np.copy(spinLattice[x2][j][0]) + np.copy(spinLattice[i][y1][0]) + np.copy(spinLattice[i][y2][0]))
+	result[1] = params.J*(np.copy(spinLattice[x1][j][1]) + np.copy(spinLattice[x2][j][1]) + np.copy(spinLattice[i][y1][1]) + np.copy(spinLattice[i][y2][1]))
+	result[2] = params.J*(np.copy(spinLattice[x1][j][2]) + np.copy(spinLattice[x2][j][2]) + np.copy(spinLattice[i][y1][2]) + np.copy(spinLattice[i][y2][2]))
 
 	return result
 
@@ -120,8 +123,10 @@ def vetorialDm(spinLattice, i, j):
 	D = params.D
 	result = np.array([0,0,0],  np.longdouble)
 
-	result[0] = D*(np.copy(spinLattice[i][j-1][2]) - np.copy(spinLattice[i][j+1][2]))
-	result[1] = D*(np.copy(spinLattice[i+1][j][2]) - np.copy(spinLattice[i-1][j][2]))
-	result[2] = D*(np.copy(spinLattice[i][j+1][0]) - np.copy(spinLattice[i+1][j][1]) - np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i-1][j][1]))
+	x1,x2,y1,y2 = lattice.createPBC(i,j)
+	
+	result[0] = D*(np.copy(spinLattice[i][y1][2]) - np.copy(spinLattice[i][y2][2]))
+	result[1] = D*(np.copy(spinLattice[x2][j][2]) - np.copy(spinLattice[x1][j][2]))
+	result[2] = D*(np.copy(spinLattice[i][y2][0]) - np.copy(spinLattice[x2][j][1]) - np.copy(spinLattice[i][y1][0]) + np.copy(spinLattice[x1][j][1]))
 
 	return result

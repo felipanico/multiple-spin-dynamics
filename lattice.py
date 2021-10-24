@@ -40,8 +40,21 @@ def createSpinLattice():
 
     return spinLattice
 
-#Periodic Boundary Condtions
-def createPbc(mag):
+def createPBC(i, j):
+    x1 = i - 1
+    x2 = i + 1
+    y1 = j - 1
+    y2 = j + 1
+
+    if (x1 < 0): x1 = params.Nx - 1
+    if (x2 >= params.Nx): x2 = 0
+    if (y1 < 0): y1 = params.Ny - 1
+    if (y2 >= params.Ny): y2 = 0
+
+    return x1,x2,y1,y2
+
+#Periodic Boundary Condtions (microLLG based)
+def createPbcTest(mag):
     aux = 1
     for i in range(params.Nx):
         mag[aux][0] = mag[aux][params.Ny]
@@ -57,9 +70,9 @@ def createPbc(mag):
     return mag
 
 def normalization(spins):
-    for i in range(params.Nx + 1):
-        for j in range(params.Ny + 1):
-            spin = spins[i+1][j+1]
+    for i in range(params.Nx):
+        for j in range(params.Ny):
+            spin = spins[i][j]
             
             magx = spin[0]
             magy = spin[1]
@@ -70,7 +83,7 @@ def normalization(spins):
                 spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
                 spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
 
-            spins[i+1][j+1] = np.copy(spin)
+            spins[i][j] = np.copy(spin)
 
     return spins
 
