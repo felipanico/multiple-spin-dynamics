@@ -1,7 +1,5 @@
-import numpy as np
 from matplotlib import pyplot as plt
-import random
-import sys
+import numpy as np
 import params
 
 def individualMagnetization(mx, my, mz):
@@ -11,99 +9,98 @@ def individualMagnetization(mx, my, mz):
 	plt.title('Magnetization')
 	plt.show()
 
-
-def spins2D(magdata):
+def spins2DT(magdata):
 	fig, ax = plt.subplots(figsize=(6,6))
 	interpolation='nearest'
-	cmap=plt.get_cmap('coolwarm_r')
+	#cmap=plt.get_cmap('coolwarm_r') blue color (?)
 	Nx = params.Nx
 	Ny = params.Ny
 
-	mx=magdata[1:Nx+1,1:Ny+1,0]
-	my=magdata[1:Nx+1,1:Ny+1,1]
-	mz=magdata[1:Nx+1,1:Ny+1,2]
+	mx=magdata[0:Nx,0:Ny,0]
+	my=magdata[0:Nx,0:Ny,1]
+	mz=magdata[0:Nx,0:Ny,2]
 	
-	im=ax.imshow(mz.T,interpolation=interpolation, cmap = cmap, origin='lower',vmin=-1,vmax=1,zorder=1)
+	im=ax.imshow(mz,interpolation=interpolation, cmap = 'bwr', origin='lower',vmin=-1,vmax=1,zorder=1)
 	width=0.0025
 	scale=2.0
 
-	Q = ax.quiver(mx.T,my.T,pivot='mid',zorder=2,width=width, scale=scale, angles='xy', scale_units='xy')
+	Q = ax.quiver(mx,my,pivot='mid',zorder=2,width=width, scale=scale, angles='xy', scale_units='xy')
 
 	fig.colorbar(im, label=r'$m_z$',orientation='vertical')
 
-	plt.show()	
-
-#@todo: remove - deprecated
-def oldSpins2D(spinLattice, spinPositions):
-	fig, ax = plt.subplots(figsize=(6,6))
-
-	x = np.zeros(params.spinsTotal)
-	y = np.zeros(params.spinsTotal)
-	sx = np.zeros(params.spinsTotal)
-	sy = np.zeros(params.spinsTotal)
-	sz = np.zeros(params.spinsTotal)
-	
-	
-	#test plot manually
-	"""
-	for k in range(params.spinsTotal):
-		x[k] = spinPositions[k][0]
-		y[k] = spinPositions[k][1]
-
-	k = 0
-	for i in range(params.Nx):
-		for j in range(params.Ny):
-			sx[k] = spinLattice[i][j][0]
-			sy[k] = spinLattice[i][j][1]
-			sz[k] = spinLattice[i][j][2]
-			k = k + 1
-				
-	sz = sz.reshape(params.spinsNumber, -1)
-	"""
-
-	#mx=magdata[-1,1:Nx+1,1:Ny+1,0]
-	#my=magdata[-1,1:Nx+1,1:Ny+1,1]
-	#mz=magdata[-1,1:Nx+1,1:Ny+1,2]
-	
-	#@todo: remove this
-	#print(spinLattice)
-	sx = spinLattice[:,:,0]
-	sy = spinLattice[:,:,1]
-	sz = spinLattice[:,:,2]
-
-	ax.quiver(sx, sz, scale = 2, angles='xy', scale_units='xy', headwidth=6, headlength=8, width=0.0025)
-	im = ax.imshow(sy, cmap='bwr', vmin=-1, vmax=1)
-	ax.set_ylim(ax.get_ylim()[1], ax.get_ylim()[0])
-	
-	fig.colorbar(im, ax=ax)
-
 	plt.show()
-	
 
-#@TODO: fix spin positions (must be a square lattice)
-#size - number of loops
-#spinTotal - spin number of lattice
-#mx, my, mz - magnetizations in x,y and z direction
-def spins3D(size, spinTotal, mx, my, mz):
-	fig3 = plt.figure()
-	cx = fig3.gca(projection='3d')
-	
-	x = np.zeros(spinTotal)
-	y = np.zeros(spinTotal)
-	z = np.zeros(spinTotal)
-	
-	sx = np.zeros((spinTotal))
-	sy = np.zeros((spinTotal))
-	sz = np.zeros((spinTotal))
+def make(size):
+    fig = plt.figure(figsize=size)
+    ax = fig.add_subplot()
+    return fig, ax
 
-	for k in range(spinTotal):
-		x[k] = 0
-		y[k] = k
-		z[k] = 0
+def getHeat(ax, arq, i, j):
+    axes = {"z": 2, "y": 1, "x": 0}
+    if type(ax) == str:
+        ax = axes[ax.lower()]
+    return (arq.T)[i][j + ax]
 
-		sx[k] = mx[k][size-1]
-		sy[k] = my[k][size-1]
-		sz[k] = mz[k][size-1]
+def getVectors(ax1, ax2, arq):
+    axes = {"z": 2, "y": 1, "x": 0}
+    if type(ax1) == str:
+        ax1 = axes[ax1.lower()]
+    if type(ax2) == str:
+        ax2 = axes[ax2.lower()]
 
-	cx.quiver(x, y, z, sx, sy, sz, length=0.05, normalize=True)
-	plt.show()
+    pairs = [[i, j] for i in range(int(len(arq.T) / 3)) for j in range(len(arq))]
+
+    x, y = zip(*pairs)
+
+    pairs = [[(arq.T)[i][j + ax1], (arq.T)[i][j + ax2]]for j in range(0, len(arq.T), 3) for i in range(len(arq))]
+
+    u, v = zip(*pairs)
+
+    return x, y, u, v
+
+def getIm(ax, arq):
+    return [[getHeat(ax, arq, i, j) for j in range(0, len(arq.T), 3)] for i in range(len(arq))]
+
+def selectImAx(ax):
+    axes = {"z": 2, "y": 1, "x": 0}
+    axes_ = {2: "z", 1: "y", 0: "x"}
+    if type(ax) == str:
+        ax = axes[ax.lower()]
+    if ax == 2:
+        return axes_[0], axes_[1], axes_[2]
+    elif ax == 1:
+        return axes_[0], axes_[2], axes_[1]
+    elif ax == 0:
+        return axes_[1], axes_[2], axes_[0]
+
+def file(arq):
+    fig, ax = make([10, 10])
+
+    ax1, ax2, ax3 = selectImAx("z")
+
+    vecs = getVectors(ax1, ax2, arq)
+    ax.quiver(*vecs, linewidth=5, angles='xy', scale_units='xy', scale=2.0, pivot="mid")
+    ax.set_xlabel(fr"${ax1}$", size=20)
+    ax.set_ylabel(fr"${ax2}$", size=20)
+    im = ax.imshow(getIm(ax3, arq), cmap='bwr', vmin=-1, vmax=1)
+    bar = plt.colorbar(im)
+    bar.set_label(fr"$m_{ax3}$", size=20)
+    ybot, ytop = ax.get_ylim()
+    xleft, xright = ax.get_xlim()
+
+    ax.set_ylim([min([ybot, ytop]), max([ybot, ytop])])
+    ax.set_xlim([min([xleft, xright]), max([xleft, xright])])
+    #fig.savefig("saida.png", bbox_inches='tight')
+    plt.show()
+
+def readFile(path):
+    with open(path, "r") as arq:
+        linhas = arq.readlines();
+        colunas = [[] for i in linhas[0].split(" \t ")[:-1]];
+        for linha in linhas:
+            for i, ele in enumerate(linha.split(" \t ")[:-1]):
+                colunas[i].append(float(ele));
+        for item in colunas:
+            item = np.array(item)
+        
+    return np.array(colunas);

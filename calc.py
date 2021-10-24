@@ -1,12 +1,13 @@
 import numpy as np
 import sys
 import params
+import lattice
 
 def llgEvolve(initialSpins, finalSpins):
 	for i in range(params.Nx):
 		for j in range(params.Ny):
-			result = llgSolve(initialSpins, i + 1,j + 1)
-			finalSpins[i + 1][j + 1] = np.copy(result)
+			result = llgSolve(initialSpins, i, j)
+			finalSpins[i][j] = np.copy(result)
 			
 	return finalSpins
 
@@ -28,7 +29,7 @@ def LLG(spin, spinLattice, i, j):
 	return result
 	
 def llgSolve(spinLattice, i, j):
-    	spin = np.copy(spinLattice[i][j])
+	spin = np.copy(spinLattice[i][j])
 
 	result = LLG(spin, spinLattice, i, j)
 	
@@ -55,29 +56,41 @@ def llgSolve(spinLattice, i, j):
 	return spin
 
 def hamiltonian(spinLattice, i, j):
-	Hex = np.copy(scalarExchange(spinLattice, i, j))
+	Hex = np.copy(scalarExchange(spinLattice, i, j)) / 2.0
 	Hz = np.copy(scalarZeeman(spinLattice, i, j))
-	Hdm = np.copy(scalarDm(spinLattice, i, j))
+	Hdm = np.copy(scalarDm(spinLattice, i, j)) / 2.0
 	
-	return Hex + Hz
+	return Hex + Hdm + Hz
 
 def scalarZeeman(spinLattice, i, j):
-    return np.dot(params.H, spinLattice[i,j])	
+    return -np.dot(params.H, spinLattice[i,j])	
 
 def scalarExchange(spinLattice, i, j):
-	s1_s0 =	np.dot(spinLattice[i,j], spinLattice[i-1,j])
-	s1_s2 =	np.dot(spinLattice[i,j], spinLattice[i+1,j])
-	s1_s3 =	np.dot(spinLattice[i,j], spinLattice[i,j+1])
-	s1_s4 =	np.dot(spinLattice[i,j], spinLattice[i,j-1])
+	s = 0.0
+	for i_ in range(-1, 2):
+		if(i_ == 0): continue
+		iint = i + i_
+		if iint >= params.Nx: iint = 0
+		elif iint < 0: iint = params.Nx - 1
+		s += np.dot(spinLattice[i][j], spinLattice[iint][j])
 
-	return params.J*(s1_s0 + s1_s2 + s1_s3 + s1_s4) / 2
+	for j_ in range(-1, 2):
+		if(j_ == 0): continue
+		jint = j + j_
+		if jint >= params.Ny: jint = 0
+		elif jint < 0: jint = params.Ny - 1
+		s += np.dot(spinLattice[i][j], spinLattice[i][jint])
+
+	return -params.J * s / 2.0
 	
 def vetorialExchange(spinLattice, i, j):
 	result = np.array([0,0,0],  np.longdouble)
 
-	result[0] = params.J*(np.copy(spinLattice[i-1][j][0]) + np.copy(spinLattice[i+1][j][0]) + np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i][j+1][0]))
-	result[1] = params.J*(np.copy(spinLattice[i-1][j][1]) + np.copy(spinLattice[i+1][j][1]) + np.copy(spinLattice[i][j-1][1]) + np.copy(spinLattice[i][j+1][1]))
-	result[2] = params.J*(np.copy(spinLattice[i-1][j][2]) + np.copy(spinLattice[i+1][j][2]) + np.copy(spinLattice[i][j-1][2]) + np.copy(spinLattice[i][j+1][2]))
+	x1,x2,y1,y2 = lattice.createPBC(i,j)
+	
+	result[0] = params.J*(np.copy(spinLattice[x1][j][0]) + np.copy(spinLattice[x2][j][0]) + np.copy(spinLattice[i][y1][0]) + np.copy(spinLattice[i][y2][0]))
+	result[1] = params.J*(np.copy(spinLattice[x1][j][1]) + np.copy(spinLattice[x2][j][1]) + np.copy(spinLattice[i][y1][1]) + np.copy(spinLattice[i][y2][1]))
+	result[2] = params.J*(np.copy(spinLattice[x1][j][2]) + np.copy(spinLattice[x2][j][2]) + np.copy(spinLattice[i][y1][2]) + np.copy(spinLattice[i][y2][2]))
 
 	return result
 
@@ -85,25 +98,35 @@ def vetorialExchange(spinLattice, i, j):
 def scalarDm(spinLattice, i, j):
 	xdir = [1,0,0]
 	ydir = [0,1,0]
-	
-	s1xs2 =	np.cross(spinLattice[i,j], spinLattice[i+1,j])
-	s1xs0 =	np.cross(spinLattice[i,j], spinLattice[i-1,j])
-	
-	xspins = np.dot(s1xs2 - s1xs0, xdir)
-	
-	s1xs4 =	np.cross(spinLattice[i,j], spinLattice[i,j+1])
-	s1xs3 =	np.cross(spinLattice[i,j], spinLattice[i,j-1])
-	
-	yspins = np.dot(s1xs4 - s1xs3, ydir)
+	tempx = np.cross(spinLattice[i][j], spinLattice[i][j])
 
-	return params.D*(xspins - yspins) / 2
+	for i_ in range(-1, 2):
+		if(i_ == 0): continue
+		iint = i + i_
+		if iint >= params.Nx: iint = 0
+		elif iint < 0: iint = params.Nx - 1
+		tempx += np.cross(spinLattice[i][j], spinLattice[iint][j] * i_ / abs(i_))
+	tempx = np.dot(tempx, xdir)
+
+	tempy = np.cross(spinLattice[i][j], spinLattice[i][j])
+	for j_ in range(-1, 2):
+		if(j_ == 0): continue
+		jint = j + j_
+		if jint >= params.Ny: jint = 0
+		elif jint < 0: jint = params.Ny - 1
+		tempy += np.cross(spinLattice[i][j], spinLattice[i][jint] * j_ / abs(j_))
+	tempy = np.dot(tempy, ydir)
+
+	return -params.D * (tempx + tempy)
 
 def vetorialDm(spinLattice, i, j):
 	D = params.D
 	result = np.array([0,0,0],  np.longdouble)
 
-	result[0] = D*(np.copy(spinLattice[i][j-1][2]) - np.copy(spinLattice[i][j+1][2]))
-	result[1] = D*(np.copy(spinLattice[i+1][j][2]) - np.copy(spinLattice[i-1][j][2]))
-	result[2] = D*(np.copy(spinLattice[i][j+1][0]) - np.copy(spinLattice[i+1][j][1]) - np.copy(spinLattice[i][j-1][0]) + np.copy(spinLattice[i-1][j][1]))
+	x1,x2,y1,y2 = lattice.createPBC(i,j)
+	
+	result[0] = D*(np.copy(spinLattice[i][y1][2]) - np.copy(spinLattice[i][y2][2]))
+	result[1] = D*(np.copy(spinLattice[x2][j][2]) - np.copy(spinLattice[x1][j][2]))
+	result[2] = D*(np.copy(spinLattice[i][y2][0]) - np.copy(spinLattice[x2][j][1]) - np.copy(spinLattice[i][y1][0]) + np.copy(spinLattice[x1][j][1]))
 
 	return result
