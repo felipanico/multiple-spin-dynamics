@@ -96,3 +96,55 @@ def sa(spins):
             loop = False
         
     return spinsmin
+
+def hamiltonian(spinLattice, i, j):
+    Hex = np.copy(scalarExchange(spinLattice, i, j)) / 2.0
+    Hz = np.copy(scalarZeeman(spinLattice, i, j))
+    Hdm = np.copy(scalarDm(spinLattice, i, j)) / 2.0
+	
+    return Hex + Hdm + Hz
+
+def scalarZeeman(spinLattice, i, j):
+    return -np.dot(params.H, spinLattice[i,j])	
+
+def scalarExchange(spinLattice, i, j):
+	s = 0.0
+	for i_ in range(-1, 2):
+		if(i_ == 0): continue
+		iint = i + i_
+		if iint >= params.Nx: iint = 0
+		elif iint < 0: iint = params.Nx - 1
+		s += np.dot(spinLattice[i][j], spinLattice[iint][j])
+
+	for j_ in range(-1, 2):
+		if(j_ == 0): continue
+		jint = j + j_
+		if jint >= params.Ny: jint = 0
+		elif jint < 0: jint = params.Ny - 1
+		s += np.dot(spinLattice[i][j], spinLattice[i][jint])
+
+	return -params.J * s / 2.0
+	
+def scalarDm(spinLattice, i, j):
+	xdir = [1,0,0]
+	ydir = [0,1,0]
+	tempx = np.cross(spinLattice[i][j], spinLattice[i][j])
+
+	for i_ in range(-1, 2):
+		if(i_ == 0): continue
+		iint = i + i_
+		if iint >= params.Nx: iint = 0
+		elif iint < 0: iint = params.Nx - 1
+		tempx += np.cross(spinLattice[i][j], spinLattice[iint][j] * i_ / abs(i_))
+	tempx = np.dot(tempx, xdir)
+
+	tempy = np.cross(spinLattice[i][j], spinLattice[i][j])
+	for j_ in range(-1, 2):
+		if(j_ == 0): continue
+		jint = j + j_
+		if jint >= params.Ny: jint = 0
+		elif jint < 0: jint = params.Ny - 1
+		tempy += np.cross(spinLattice[i][j], spinLattice[i][jint] * j_ / abs(j_))
+	tempy = np.dot(tempy, ydir)
+
+	return -params.D * (tempx + tempy)

@@ -9,26 +9,29 @@ def individualMagnetization(mx, my, mz):
 	plt.title('Magnetization')
 	plt.show()
 
-def spins2DT(magdata):
-	fig, ax = plt.subplots(figsize=(6,6))
-	interpolation='nearest'
-	#cmap=plt.get_cmap('coolwarm_r') blue color (?)
-	Nx = params.Nx
-	Ny = params.Ny
+def spins2DT(magdata, step):
+    fig, ax = plt.subplots(figsize=(6,6))
+    interpolation='nearest'
+    #cmap=plt.get_cmap('coolwarm_r') blue color (?)
+    Nx = params.Nx
+    Ny = params.Ny
 
-	mx=magdata[0:Nx,0:Ny,0]
-	my=magdata[0:Nx,0:Ny,1]
-	mz=magdata[0:Nx,0:Ny,2]
-	
-	im=ax.imshow(mz,interpolation=interpolation, cmap = 'bwr', origin='lower',vmin=-1,vmax=1,zorder=1)
-	width=0.0025
-	scale=2.0
+    mx=magdata[0:Nx,0:Ny,0]
+    my=magdata[0:Nx,0:Ny,1]
+    mz=magdata[0:Nx,0:Ny,2]
 
-	Q = ax.quiver(mx,my,pivot='mid',zorder=2,width=width, scale=scale, angles='xy', scale_units='xy')
+    im=ax.imshow(mz,interpolation=interpolation, cmap = 'bwr', origin='lower',vmin=-1,vmax=1,zorder=1)
+    width=0.0025
+    scale=2.0
 
-	fig.colorbar(im, label=r'$m_z$',orientation='vertical')
+    Q = ax.quiver(mx,my,pivot='mid',zorder=2,width=width, scale=scale, angles='xy', scale_units='xy')
 
-	plt.show()
+    fig.colorbar(im, label=r'$m_z$',orientation='vertical')
+    fig.savefig("out/output_step_" + str(step) + ".png", bbox_inches='tight')
+
+    #if (step == params.n): 
+    #    plt.show()
+        
 
 def make(size):
     fig = plt.figure(figsize=size)

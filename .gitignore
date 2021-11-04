@@ -5,3 +5,4 @@ data/
 examples/
 __pycache__/
 params.py
+out/

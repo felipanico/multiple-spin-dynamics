@@ -22,7 +22,7 @@ np.random.seed(0)
 if (params.random):
     spins = lattice.createSpinLattice()
 else:
-    spins = lattice.readSpinLattice('data/input.dat')
+    spins = lattice.readSpinLattice('data/input20x20.dat')
 
 if (params.minimize):
     #Monte Carlo
@@ -32,6 +32,9 @@ else:
     finalSpins = np.zeros((params.Nx, params.Ny,3))
     for step in range(n):
         spins = np.copy(calc.llgEvolve(spins, finalSpins))
-        spins = np.copy(lattice.normalization(spins))        
-
-plot.spins2DT(spins)
+        spins = np.copy(lattice.normalization(spins))
+        if (step % 100 == 0):    
+            print('LLG step:', step)        
+            plot.spins2DT(spins, step)
+            
+plot.spins2DT(spins, step + 1)
