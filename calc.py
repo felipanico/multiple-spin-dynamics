@@ -4,24 +4,25 @@ import params
 import lattice
 
 def llgEvolve(initialSpins, finalSpins):
+	
 	for i in range(params.Nx):
 		for j in range(params.Ny):
-			finalSpins[i][j] = np.copy(Rk2(initialSpins, i, j))
+			finalSpins[i][j] = np.copy(euler(initialSpins, i, j))
 			
 	return finalSpins
 
 def LLG(spin, spinLattice, i, j):
 	result = np.array([0,0,0],  np.longdouble)
 	aux = np.array([0,0,0],  np.longdouble)
-	
-	Hdm = np.copy(vetorialDm(spinLattice, i, j))
+
 	Hex = np.copy(vetorialExchange(spinLattice, i, j))
+	Hdm = np.copy(vetorialDm(spinLattice, i, j))
 	Hz = np.copy(vetorialZeeman())
-	
+
 	K1 = 1
 	K2 = 1
 	
-	Heff =  Hex + Hdm + Hz
+	Heff =  np.copy(Hex) + np.copy(Hdm) + np.copy(Hz)
 
 	SxHeff = np.cross(spin, Heff)
 
@@ -34,12 +35,12 @@ def LLG(spin, spinLattice, i, j):
 	aux[2] = np.copy(SxHeff[2]) + K1*np.copy(djS[2]) - K2*params.beta * np.copy(SxdjS[2])
 
 	alphaSxdS = np.copy(diffS(spinLattice, i, j, aux))
-
+	
 	result[0] = aux[0] + alphaSxdS[0]
 	result[1] = aux[1] + alphaSxdS[1]
 	result[2] = aux[2] + alphaSxdS[2]
 
-	return result
+	return np.array(result, np.longdouble)
 
 def diffS(spinLattice, i, j, v1):
 	a = params.alpha
@@ -64,11 +65,21 @@ def diffS(spinLattice, i, j, v1):
 
 	return np.array([dsx,dsy,dsz], np.longdouble)
 	
+def euler(spinLattice, i, j):
+	spin = np.copy(spinLattice[i][j])
+	result = np.copy(LLG(spin, spinLattice, i, j))
+
+	aux = np.array([0,0,0], np.longdouble)
+
+	aux[0] = np.copy(spin[0]) + params.h*np.copy(result[0])
+	aux[1] = np.copy(spin[1]) + params.h*np.copy(result[1]) 
+	aux[2] = np.copy(spin[2]) + params.h*np.copy(result[2])
+
+	return np.array(aux, np.longdouble)
 
 def Rk2(spinLattice, i, j):
 	spin = np.copy(spinLattice[i][j])
-
-	result = LLG(spin, spinLattice, i, j)
+	result = np.copy(LLG(spin, spinLattice, i, j))
 
 	k1 = np.copy(result)
 
@@ -76,21 +87,23 @@ def Rk2(spinLattice, i, j):
 	k1y = k1[1]
 	k1z = k1[2]
 
-	result[0] = result[0] + params.h
+	result[0] = result[0] + params.h * k1x
 	result[1] = result[1] + params.h * k1y
 	result[2] = result[2] + params.h * k1z
 
-	k2 = params.h * LLG(result, spinLattice, i, j)
+	k2 = params.h * np.copy(LLG(result, spinLattice, i, j))
 
 	k2x = k2[0]
 	k2y = k2[1]
 	k2z = k2[2]
 
-	spin[0] = spin[0] + (params.h/2) * (k1x + k2x) 
-	spin[1] = spin[1] + (params.h/2) * (k1y + k2y) 
-	spin[2] = spin[2] + (params.h/2) * (k1z + k2z) 
+	aux = np.array([0,0,0], np.longdouble)
+	
+	aux[0] = spin[0] + (params.h/2) * (k1x + k2x) 
+	aux[1] = spin[1] + (params.h/2) * (k1y + k2y) 
+	aux[2] = spin[2] + (params.h/2) * (k1z + k2z)
 
-	return spin
+	return np.array(aux, np.longdouble)
 
 def Rk4(spinLattice, i, j):
 	spin = np.copy(spinLattice[i][j])
@@ -149,7 +162,7 @@ def vetorialExchange(spinLattice, i, j):
 	result[1] = np.copy(spinLattice[x1][j][1]) + np.copy(spinLattice[x2][j][1]) + np.copy(spinLattice[i][y1][1]) + np.copy(spinLattice[i][y2][1])
 	result[2] = np.copy(spinLattice[x1][j][2]) + np.copy(spinLattice[x2][j][2]) + np.copy(spinLattice[i][y1][2]) + np.copy(spinLattice[i][y2][2])
 
-	return -params.J*result
+	return np.array(-params.J*result, np.longdouble) 
 
 
 def vetorialDm(spinLattice, i, j):
@@ -163,37 +176,8 @@ def vetorialDm(spinLattice, i, j):
 
 	D = params.D
 
-	"""
-	for n in range(4):
-		Dx = 1
-		Dy = 1
-		Dz = 0
-		
-		#if (n == 0): Dx = -1
-		#if (n == 2): Dy = -1
-
-		if (n == 0 or n == 2): 
-			Dy = -1
-			Dx = -1
-		else:
-			Dx = 1
-			Dy = 1
-		
-		if (n < 2 ): 
-			x = index[n]
-			y = j 
-		else: 
-			x = i
-			y = index[n]
-
-		spin = np.copy(spinLattice[x][y])
-
-		xAux = xAux + D*(Dy*spin[2] - Dz*spin[1])
-		yAux = yAux + D*(Dz*spin[0] - Dx*spin[2])
-		zAux = zAux + D*(Dx*spin[1] - Dy*spin[0])
-	"""
 	Dz = 0
-	
+
 	for i_ in range(-1, 2):
 		iint = i + i_
 		Dy = i_
@@ -208,23 +192,18 @@ def vetorialDm(spinLattice, i, j):
 			if jint >= params.Ny: jint = 0
 			elif jint < 0: jint = params.Ny - 1
 
-			if not(i_ == 0 or j_ == 0): continue
-		
+			if (i_ != 0 and j_ != 0): continue
+
 			spin = np.copy(spinLattice[iint][jint])
 
 			xAux = xAux + D*(Dy*spin[2] - Dz*spin[1])
 			yAux = yAux + D*(Dz*spin[0] - Dx*spin[2])
 			zAux = zAux + D*(Dx*spin[1] - Dy*spin[0])
 
-	
-	result[0] = xAux
-	result[1] = yAux
-	result[2] = zAux
-
-	return result
+	return np.array([xAux,yAux, zAux], np.longdouble)
 
 def vetorialZeeman():
-    return -params.H
+    return np.array(-params.H, np.longdouble)
 
 def stt(spinLattice, i, j):
 	jx = params.j[0]
@@ -234,7 +213,7 @@ def stt(spinLattice, i, j):
 
 	result = (jx/2)*(np.copy(spinLattice[x2][j]) - np.copy(spinLattice[x1][j])) + (jy/2)*(np.copy(spinLattice[i][y2]) - np.copy(spinLattice[i][y1]))
 
-	return result
+	return np.array(result, np.longdouble)
 	
 	
 
