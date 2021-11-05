@@ -91,7 +91,7 @@ def Rk2(spinLattice, i, j):
 	result[1] = result[1] + params.h * k1y
 	result[2] = result[2] + params.h * k1z
 
-	k2 = params.h * np.copy(LLG(result, spinLattice, i, j))
+	k2 = np.copy(LLG(result, spinLattice, i, j))
 
 	k2x = k2[0]
 	k2y = k2[1]
@@ -211,7 +211,9 @@ def stt(spinLattice, i, j):
 
 	x1,x2,y1,y2 = lattice.createPBC(i,j)
 
-	result = (jx/2)*(np.copy(spinLattice[x2][j]) - np.copy(spinLattice[x1][j])) + (jy/2)*(np.copy(spinLattice[i][y2]) - np.copy(spinLattice[i][y1]))
+	#@todo: inverse x and y
+
+	result = (jy/2)*(np.copy(spinLattice[x2][j]) - np.copy(spinLattice[x1][j])) + (jx/2)*(np.copy(spinLattice[i][y2]) - np.copy(spinLattice[i][y1]))
 
 	return np.array(result, np.longdouble)
 	

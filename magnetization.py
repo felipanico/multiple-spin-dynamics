@@ -22,10 +22,7 @@ np.random.seed(0)
 if (params.random):
     spins = lattice.createSpinLattice()
 else:
-    spins = lattice.readSpinLattice('data/input20x20.dat')
-
-plot.spins2DT(spins, 1)
-sys.exit()
+    spins = lattice.readSpinLattice('data/spins.in')
 
 if (params.minimize):
     #Monte Carlo
