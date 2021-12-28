@@ -2,7 +2,6 @@ from hashlib import new
 from typing import final
 import random
 import math
-import calc
 import params
 from math import exp
 import numpy as np
@@ -12,11 +11,11 @@ def calcHam(spins):
     H = 0.0
     for i in range(params.Nx):
         for j in range(params.Ny):
-            H += calc.hamiltonian(spins, i, j)
+            H += hamiltonian(spins, i, j)
     return H
 
 
-def metropolis(spins):
+def metropolis(spins, deffects):
     energy = 0
     energies = []
     T = 20.0
@@ -41,9 +40,23 @@ def metropolis(spins):
             magy = spinsnew[x,y][1]
             magz = spinsnew[x,y][2]
 
-            spinsnew[x,y][0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-            spinsnew[x,y][1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-            spinsnew[x,y][2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
+            pinning = deffects[x,y]
+
+            if (pinning[0] == 0):
+                magx = 0
+                magy = 0
+                magz = 0
+
+            denominator = np.sqrt(magx**2 + magy**2 + magz**2)
+
+            if (denominator != 0):
+                spinsnew[x,y][0] = magx / denominator
+                spinsnew[x,y][1] = magy / denominator
+                spinsnew[x,y][2] = magz / denominator
+            else:
+                spinsnew[x,y][0] = 0
+                spinsnew[x,y][1] = 0
+                spinsnew[x,y][2] = 0
             
             energy1 = calcHam(spins)
 
@@ -62,6 +75,7 @@ def metropolis(spins):
 
     return spinsmin
 
+#@todo: normalization
 def sa(spins):
     decrement = 0.9
     currentTemp = 20.0

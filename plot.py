@@ -33,6 +33,8 @@ def spins2DT(magdata, step):
     #    plt.show()
         
 
+#@todo: check and remove old functions
+
 def make(size):
     fig = plt.figure(figsize=size)
     ax = fig.add_subplot()

@@ -30,8 +30,7 @@ def createSpinLattice():
             magy = np.random.uniform(-10, 10) 
             magz = np.random.uniform(-1, 1)
 
-            spin = [magx, magy, magz]
-
+            spin = [magx, magy, magz]    
             spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
             spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
             spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
@@ -39,6 +38,26 @@ def createSpinLattice():
             spinLattice[i][j] = spin
 
     return spinLattice
+
+def createDeffects():
+    spinLattice = np.zeros((params.Nx,params.Ny,3), np.float64)
+    
+    for i in range(params.Nx):
+        for j in range(params.Ny):
+            
+            spin = [1, 1, 1]    
+            
+            if (np.random.uniform(-1, 5) < 0 ):
+                spin = [0,0,0]
+           
+
+            spinLattice[i][j] = spin
+
+    return spinLattice
+
+def readDeffects():
+    #@todo: read from file
+    return [0,0,0]
 
 def createPBC(i, j):
     x1 = i - 1
@@ -69,10 +88,14 @@ def createPbcTest(mag):
     
     return mag
 
-def normalization(spins):
+def normalization(spins, deffects):
     for i in range(params.Nx):
         for j in range(params.Ny):
             spin = spins[i][j]
+            pinning = deffects[i][j]
+
+            if (pinning[0] == 0):
+                spin = [0,0,0]
             
             magx = spin[0]
             magy = spin[1]

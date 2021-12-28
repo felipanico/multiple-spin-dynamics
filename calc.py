@@ -7,7 +7,7 @@ def llgEvolve(initialSpins, finalSpins):
 	
 	for i in range(params.Nx):
 		for j in range(params.Ny):
-			finalSpins[i][j] = np.copy(euler(initialSpins, i, j))
+			finalSpins[i][j] = np.copy(rk2(initialSpins, i, j))
 			
 	return finalSpins
 
@@ -77,7 +77,7 @@ def euler(spinLattice, i, j):
 
 	return np.array(aux, np.longdouble)
 
-def Rk2(spinLattice, i, j):
+def rk2(spinLattice, i, j):
 	spin = np.copy(spinLattice[i][j])
 	result = np.copy(LLG(spin, spinLattice, i, j))
 
@@ -105,7 +105,7 @@ def Rk2(spinLattice, i, j):
 
 	return np.array(aux, np.longdouble)
 
-def Rk4(spinLattice, i, j):
+def rk4(spinLattice, i, j):
 	spin = np.copy(spinLattice[i][j])
 
 	result = LLG(spin, spinLattice, i, j)
@@ -166,12 +166,6 @@ def vetorialExchange(spinLattice, i, j):
 
 
 def vetorialDm(spinLattice, i, j):
-	result = np.array([0,0,0],  np.longdouble)
-
-	x1,x2,y1,y2 = lattice.createPBC(i,j)
-
-	index = [x1,x2,y1,y2]
-
 	xAux = yAux = zAux = 0
 
 	D = params.D
@@ -211,7 +205,7 @@ def stt(spinLattice, i, j):
 
 	x1,x2,y1,y2 = lattice.createPBC(i,j)
 
-	#@todo: inverse x and y
+	#obs: x and y are inverted
 
 	result = (jy/2)*(np.copy(spinLattice[x2][j]) - np.copy(spinLattice[x1][j])) + (jx/2)*(np.copy(spinLattice[i][y2]) - np.copy(spinLattice[i][y1]))
 
