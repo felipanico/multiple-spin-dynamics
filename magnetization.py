@@ -26,9 +26,7 @@ else:
 
 spins = np.copy(lattice.normalization(spins, deffects))
 
-plot.spins2DT(spins, n)
-
-#sys.exit()
+plot.spins2DT(spins, 1)
 
 if (params.minimize):
     #Monte Carlo
