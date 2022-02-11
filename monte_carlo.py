@@ -6,6 +6,7 @@ import params
 from math import exp
 import numpy as np
 import lattice
+import plot
 
 def calcHam(spins):
     H = 0.0
@@ -41,12 +42,12 @@ def metropolis(spins, deffects):
             magz = spinsnew[x,y][2]
 
             pinning = deffects[x,y]
-
+                
             if (pinning[0] == 0):
                 magx = 0
                 magy = 0
                 magz = 0
-
+            
             denominator = np.sqrt(magx**2 + magy**2 + magz**2)
 
             if (denominator != 0):
@@ -70,8 +71,13 @@ def metropolis(spins, deffects):
             if energy1 <= Emin:
                 Emin = energy1
                 spinsmin = np.copy(spinsnew)
+        
         T = dec * T
+        
         print(f"MT - Temp: {T:5f}\tEmin: {Emin:5f}")
+        
+        if (step % 10000 == 0 and step > 0):    
+            plot.spins2DT(spinsmin, step)
 
     return spinsmin
 
