@@ -3,6 +3,7 @@ import numpy as np
 #loop
 n = 10000
 h = 0.01
+outputInterval = 100
 
 spinsNumber = 10
 Nx = 1
@@ -23,4 +24,5 @@ random = True
 
 inputFile = 'data/input.dat'
 
+deffects = False
 readDeffects = False

@@ -34,12 +34,10 @@ if (params.minimize):
 else:    
     #LLG
     finalSpins = np.zeros((params.Nx, params.Ny,3))
-    for step in range(n):
+    for step in range(n + 1):
         spins = np.copy(calc.llgEvolve(spins, finalSpins))
         spins = np.copy(lattice.normalization(spins, deffects))
         
-        if (step % 100 == 0 and step > 0):    
+        if (step % params.outputInterval == 0 and step > 0):    
             print('LLG step:', step)        
             plot.spins2DT(spins, step)
-
-plot.spins2DT(spins, n + 1)

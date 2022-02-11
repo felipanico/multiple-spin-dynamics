@@ -40,6 +40,9 @@ def createSpinLattice():
     return spinLattice
 
 def createDeffects():
+    if (params.deffects == False):
+        return np.ones((params.Nx,params.Ny,3), np.float64)
+    
     spinLattice = np.zeros((params.Nx,params.Ny,3), np.float64)
     
     for i in range(params.Nx):
