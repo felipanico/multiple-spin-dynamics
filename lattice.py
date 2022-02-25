@@ -50,17 +50,13 @@ def createDeffects():
             
             spin = [1, 1, 1]    
             
-            if (np.random.uniform(-1, 5) < 0 ):
+            if (np.random.uniform(-1, 50) < 0 ):
                 spin = [0,0,0]
            
 
             spinLattice[i][j] = spin
 
     return spinLattice
-
-def readDeffects():
-    #@todo: read from file
-    return [0,0,0]
 
 def createPBC(i, j):
     x1 = i - 1
@@ -74,22 +70,6 @@ def createPBC(i, j):
     if (y2 >= params.Ny): y2 = 0
 
     return x1,x2,y1,y2
-
-#Periodic Boundary Condtions (microLLG based)
-def createPbcTest(mag):
-    aux = 1
-    for i in range(params.Nx):
-        mag[aux][0] = mag[aux][params.Ny]
-        mag[aux][params.Ny + 1] = mag[aux][1]
-        aux = aux + 1
-
-    aux = 1
-    for j in range(params.Ny):
-        mag[0][aux] = mag[params.Nx][aux]
-        mag[params.Nx + 1][aux] = mag[1][aux]
-        aux = aux + 1    
-    
-    return mag
 
 def normalization(spins, deffects):
     for i in range(params.Nx):
@@ -157,60 +137,20 @@ def readSpinLattice(path):
             
     return spinsLattice
 
+def readDeffects(path):
+    pinnings = pd.read_table(path, header=None)
+    lines = len(pinnings)
+    columns = len(pinnings)
+    spinsLattice = np.zeros((params.Nx,params.Ny,3), np.float64)
 
+    for i in range(lines):
+        for j in range(columns):
+            pinning = [1, 1, 1] 
 
-i0=int(params.Nx/2)
-j0=int(params.Ny/2)
-irange = np.arange(params.Nx)
-jrange = np.arange(params.Ny)
-
-xT, yT = np.meshgrid(irange-i0, jrange-j0)
-x=xT.T
-y=yT.T
-r=np.sqrt(x*x+y*y)+1.e-5
-
-r0=10.
-def prof(r):
-	return (r/r0)*np.exp(-(r-r0)/r0)
-
-def create_skyrmion(spins):
-    spins[:,:,0] = -prof(r)*x/r
-    spins[:,:,1] = -prof(r)*y/r
-    spins[:,:,2] = np.sqrt(1.-spins[:,:,0]*spins[:,:,0]-spins[:,:,1]*spins[:,:,1])
-    inds=np.where(r<r0)
-    spins[inds[0],inds[1],2] = -spins[inds[0],inds[1],2]
-
-    return spins
-
-def skyrmion(spins):
-    for i in range(params.Nx):
-        for j in range(params.Ny):
-            spin = spins[i][j]
+            if (pinnings[i][j] == 1):
+                pinning = [0,0,0]
             
-            magx, magy, magz = spin[0]/1e-9-50, spin[1]/1e-9-50, spin[2]/1e-9
-
-            if (spin[0] > 0 and spin[1] > 0 and spin[2] > 0):
-                spin[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-                spin[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-                spin[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
-
-            spins[i][j] = np.array([-spin[1], spin[0], 10])
-
-    return spins
-
-"""
-def arrayNormalize(v):
-    normalized = np.array([0,0,0],  np.longdouble)
-	
-	magx = v[0]
-	magy = v[1]
-	magz = v[2]
-
-	if (v[0] != 0 and v[1] != 0 and v[2] != 0):
-		normalized[0] = magx / np.sqrt(magx**2 + magy**2 + magz**2)
-		normalized[1] = magy / np.sqrt(magx**2 + magy**2 + magz**2)
-		normalized[2] = magz / np.sqrt(magx**2 + magy**2 + magz**2)
-
-	return normalized
-
-"""
+            spinsLattice[j][i] = pinning
+        
+    
+    return spinsLattice

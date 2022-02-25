@@ -14,10 +14,19 @@ Ny = params.Ny
 
 np.random.seed(0)
 
+""" @TODO
+  1. save lattice
+  2. fix rk2 method
+  3. thiele aproximation (calc velocity)
+  4. add temperature 
+
+"""
+
 if (params.readDeffects):
-    deffects = lattice.readDeffects()
+    deffects = lattice.readDeffects(params.deffects)
 else:
     deffects = lattice.createDeffects()
+
 
 if (params.random):
     spins = lattice.createSpinLattice()
@@ -25,8 +34,6 @@ else:
     spins = lattice.readSpinLattice(params.inputFile)
 
 spins = np.copy(lattice.normalization(spins, deffects))
-
-plot.spins2DT(spins, 1)
 
 if (params.minimize):
     #Monte Carlo
