@@ -87,9 +87,9 @@ def rk2(spinLattice, i, j):
 	k1y = k1[1]
 	k1z = k1[2]
 
-	result[0] = result[0] + params.h * k1x
-	result[1] = result[1] + params.h * k1y
-	result[2] = result[2] + params.h * k1z
+	result[0] = params.h * k1x
+	result[1] = params.h * k1y
+	result[2] = params.h * k1z
 
 	k2 = np.copy(LLG(result, spinLattice, i, j))
 
