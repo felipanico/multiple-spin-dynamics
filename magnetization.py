@@ -21,16 +21,17 @@ np.random.seed(0)
   4. create hole
 """
 
-if (params.readDeffects):
-    deffects = lattice.readDeffects(params.deffects)
+if (params.useDeffects):
+    deffects = lattice.chooseDeffects()
 else:
-    deffects = lattice.createDeffects()
-
+    deffects = np.ones((params.Nx,params.Ny,3), np.float64)
 
 if (params.random):
     spins = lattice.createSpinLattice()
 else:
     spins = lattice.readSpinLattice(params.inputFile)
+
+if (params.createSkyrmion): spins = lattice.iniSkyrmion(spins)
 
 spins = np.copy(lattice.normalization(spins, deffects))
 
@@ -43,7 +44,6 @@ else:
     for step in range(n + 1):
         spins = np.copy(calc.llgEvolve(spins, finalSpins))
         spins = np.copy(lattice.normalization(spins, deffects))
-        ####CÁLCULO DA VELOCIDADE#####
         
         if (step % params.outputInterval == 0 and step > 0):    
             print('LLG step:', step)        

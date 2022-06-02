@@ -12,7 +12,6 @@ def individualMagnetization(mx, my, mz):
 def spins2DT(magdata, step):
     fig, ax = plt.subplots(figsize=(6,6))
     interpolation='nearest'
-    #cmap=plt.get_cmap('coolwarm_r') blue color (?)
     Nx = params.Nx
     Ny = params.Ny
 

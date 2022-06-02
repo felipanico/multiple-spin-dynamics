@@ -1,3 +1,4 @@
+from venv import create
 import numpy as np
 import sys
 import random
@@ -39,6 +40,15 @@ def createSpinLattice():
 
     return spinLattice
 
+
+def chooseDeffects():
+    if (params.deffects != ''):
+        spins = readDeffects()
+    else:
+        spins = createDeffects()
+    
+    return spins 
+
 def createDeffects():
     if (params.deffects == False):
         return np.ones((params.Nx,params.Ny,3), np.float64)
@@ -78,6 +88,7 @@ def normalization(spins, deffects):
             pinning = deffects[i][j]
 
             if (pinning[0] == 0):
+                print('pinning', pinning[0])
                 spin = [0,0,0]
             
             magx = spin[0]
@@ -105,6 +116,33 @@ def iniRand(magphys):
             spin = [magx, magy, magz]
 
             magphys[i][j] = spin
+    return magphys
+
+def iniUniform():
+    spins = np.ones((params.Nx,params.Ny,3), np.float64)
+    return spins
+
+def iniSkyrmion(magphys):
+    irange = np.arange(params.Nx)
+    jrange = np.arange(params.Ny)
+    i0=int(params.Nx/2)
+    j0=int(params.Ny/2)
+    r0=5.
+
+    xT, yT = np.meshgrid(irange-i0, jrange-j0)
+    x=xT.T
+    y=yT.T
+    r=np.sqrt(x*x+y*y)+1.e-5
+
+    R = (r/r0)*np.exp(-(r-r0)/r0)
+
+    magphys[:,:,0] = -R*x/r
+    magphys[:,:,1] = -R*y/r
+    magphys[:,:,2] = np.sqrt(1.-magphys[:,:,0]*magphys[:,:,0]-magphys[:,:,1]*magphys[:,:,1])
+    
+    inds=np.where(r<r0)
+    magphys[inds[0],inds[1],2] = -magphys[inds[0],inds[1],2]
+
     return magphys
 
 def kick(lattice, T):
