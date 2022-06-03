@@ -35,6 +35,9 @@ if (params.createSkyrmion): spins = lattice.iniSkyrmion(spins)
 
 spins = np.copy(lattice.normalization(spins, deffects))
 
+plot.spins2DT(spins, 1)
+sys.exit()
+
 if (params.minimize):
     #Monte Carlo
     spins = np.copy(monte_carlo.metropolis(spins, deffects))
