@@ -7,3 +7,4 @@ __pycache__/
 params.py
 out/
 in/
+nohup.out
