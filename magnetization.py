@@ -14,13 +14,6 @@ Ny = params.Ny
 
 np.random.seed(0)
 
-""" @TODO
-  1. save lattice
-  2. create skyrmion
-  3. calc velocity
-  4. create hole
-"""
-
 if (params.useDeffects):
     deffects = lattice.chooseDeffects()
 else:
