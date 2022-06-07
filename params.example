@@ -26,3 +26,5 @@ inputFile = 'data/input.dat'
 
 deffects = False
 readDeffects = False
+createSkyrmion = False
+
