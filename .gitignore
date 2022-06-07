@@ -1,9 +1,7 @@
 env/
 .vscode/
-graphs/
-data/
-examples/
 __pycache__/
 params.py
-out/
-in/
+output/
+spins/
+pinnings/
