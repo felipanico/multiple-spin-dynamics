@@ -28,3 +28,5 @@ deffects = False
 readDeffects = False
 createSkyrmion = False
 
+integrationMethod = "euler"
+

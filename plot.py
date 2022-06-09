@@ -26,14 +26,10 @@ def spins2DT(magdata, step):
     Q = ax.quiver(mx,my,pivot='mid',zorder=2,width=width, scale=scale, angles='xy', scale_units='xy')
 
     fig.colorbar(im, label=r'$m_z$',orientation='vertical')
-    fig.savefig("out/output_step_" + str(step) + ".png", bbox_inches='tight')
-
-    #if (step == params.n): 
-    #    plt.show()
+    fig.savefig("output/step_" + str(step) + ".png", bbox_inches='tight')
         
 
 #@todo: check and remove old functions
-
 def make(size):
     fig = plt.figure(figsize=size)
     ax = fig.add_subplot()

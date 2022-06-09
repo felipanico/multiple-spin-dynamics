@@ -7,7 +7,10 @@ def llgEvolve(initialSpins, finalSpins):
 	
 	for i in range(params.Nx):
 		for j in range(params.Ny):
-			finalSpins[i][j] = np.copy(euler(initialSpins, i, j))
+			if (params.integrationMethod == "euler"):
+				finalSpins[i][j] = np.copy(euler(initialSpins, i, j))
+			else:
+				finalSpins[i][j] = np.copy(rk2(initialSpins, i, j))
 			
 	return finalSpins
 

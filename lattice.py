@@ -6,6 +6,7 @@ import params
 import pandas as pd
 import math
 from random import random
+import matplotlib.pyplot as plt
 
 def createSpinPositions():
     positions = np.zeros([params.spinsTotal, 3])
@@ -122,28 +123,40 @@ def iniUniform():
     spins = np.ones((params.Nx,params.Ny,3), np.float64)
     return spins
 
-def iniSkyrmion(magphys):
-    irange = np.arange(params.Nx)
-    jrange = np.arange(params.Ny)
-    i0=int(params.Nx/2)
-    j0=int(params.Ny/2)
-    r0=5.
+i0=int(params.Nx/2)
+j0=int(params.Ny/2)
+irange = np.arange(params.Nx)
+jrange = np.arange(params.Ny)
 
-    xT, yT = np.meshgrid(irange-i0, jrange-j0)
-    x=xT.T
-    y=yT.T
-    r=np.sqrt(x*x+y*y)+1.e-5
+xT, yT = np.meshgrid(irange-i0, jrange-j0)
+x=xT.T
+y=yT.T
+r=np.sqrt(x*x+y*y)+1.e-5
 
-    R = (r/r0)*np.exp(-(r-r0)/r0)
+r0=3.
+def prof(r):
+	return (r/r0)*np.exp(-(r-r0)/r0)
 
-    magphys[:,:,0] = -R*x/r
-    magphys[:,:,1] = -R*y/r
+def iniSkyrmion():
+    magphys = np.ones((params.Nx,params.Ny,3), np.float64)
+    magphys[:,:,0] = -prof(r)*x/r
+    magphys[:,:,1] = prof(r)*y/r
     magphys[:,:,2] = np.sqrt(1.-magphys[:,:,0]*magphys[:,:,0]-magphys[:,:,1]*magphys[:,:,1])
-    
     inds=np.where(r<r0)
     magphys[inds[0],inds[1],2] = -magphys[inds[0],inds[1],2]
 
     return magphys
+
+def iniVortex(spins):
+    coords = np.linspace(-1, 1, 11)
+    X, Y = np.meshgrid(coords, coords)
+    Vx, Vy = Y, -X
+    plt.figure()
+    plt.quiver(X, Y, Vx, Vy, pivot='mid')
+    plt.axis('square')
+    plt.show()
+
+    return spins
 
 def kick(lattice, T):
     for i in range(params.Nx):
