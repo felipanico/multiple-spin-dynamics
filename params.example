@@ -29,4 +29,5 @@ readDeffects = False
 createSkyrmion = False
 
 integrationMethod = "euler"
+saveLattice = False
 

@@ -175,6 +175,16 @@ def kick(lattice, T):
 
     return lattice
 
+def writeSpinLattice(spins):
+    spinsLattice = np.zeros((params.Nx,params.Ny,3), np.float64)
+    aux = 0
+    
+    for x in range(params.Nx - 1, -1, -1):
+        spinsLattice[aux] = spins[x]
+        aux = aux + 1
+    
+    np.savetxt("output/spins.in", spinsLattice.reshape((params.spinsNumber, 3 * params.spinsNumber)), fmt="%s", delimiter='\t')
+
 def readSpinLattice(path):
     spins = pd.read_table(path, header=None)
     lines = len(spins)

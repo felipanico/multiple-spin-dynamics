@@ -40,3 +40,9 @@ else:
         if (step % params.outputInterval == 0 and step > 0):    
             print('LLG step:', step)        
             plot.spins2DT(spins, step)
+
+if (params.saveLattice): 
+    print("Saving Lattice...")
+    lattice.writeSpinLattice(spins)
+
+print("End of execution")
