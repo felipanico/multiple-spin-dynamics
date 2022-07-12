@@ -13,7 +13,7 @@ Nx = params.Nx
 Ny = params.Ny
 stepFileName = params.initialStep
 
-np.random.seed(0)
+#np.random.seed(0)
 
 if (params.useDeffects):
     deffects = lattice.chooseDeffects()
@@ -51,6 +51,10 @@ else:
 
 if (params.saveLattice): 
     print("Saving Lattice...")
-    lattice.writeSpinLattice(spins)
+    lattice.writeSpinLattice(spins, "output/spins.in", np.float64)
+
+if (params.saveDeffects): 
+    print("Saving Deffects...")
+    lattice.writeSpinLattice(deffects, "output/vac.in", np.int0)
 
 print("End of execution")

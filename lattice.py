@@ -43,30 +43,55 @@ def createSpinLattice():
 
 
 def chooseDeffects():
-    if (params.deffects != ''):
-        spins = readDeffects()
+    if (params.deffects != False):
+        spins = readDeffects(params.deffects)
     else:
         spins = createDeffects()
     
     return spins 
 
 def createDeffects():
-    if (params.deffects == False):
-        return np.ones((params.Nx,params.Ny,3), np.float64)
+    #@todo: fix
+    #if (params.deffects == False):
+    #    return np.ones((params.Nx,params.Ny,3))
     
-    spinLattice = np.zeros((params.Nx,params.Ny,3), np.float64)
+    spinLattice = np.zeros((params.Nx,params.Ny), np.int0)
     
+    totalPinning = 300
+    size = 1600
+    pinnings = 0;
+    aux = 0;
+
+    
+    while(pinnings < totalPinning):
+        if (np.random.uniform(1, 10) < 5 ):
+            irand = np.random.randint(1,40)
+            jrand = np.random.randint(1,40)
+            spinLattice[irand][jrand] = 1
+            pinnings = pinnings + 1
+
+    np.savetxt("output/vac.in", spinLattice.reshape((params.spinsNumber, params.spinsNumber)), fmt="%s", delimiter='\t')
+    sys.exit()
+
     for i in range(params.Nx):
         for j in range(params.Ny):
+            aux = aux + 1
+            spin = 0    
             
-            spin = [1, 1, 1]    
-            
-            if (np.random.uniform(-1, 50) < 0 ):
-                spin = [0,0,0]
-           
+            if (np.random.uniform(1, 2 * size) < size ):
+                spin = 1
+                pinnings = pinnings + 1
+                
+                if (pinnings >= totalPinning): break;
+        
 
             spinLattice[i][j] = spin
-
+        
+        if (pinnings >= totalPinning): break;
+    
+    #print(spinLattice)
+    #sys.exit()
+    
     return spinLattice
 
 def createPBC(i, j):
@@ -88,8 +113,7 @@ def normalization(spins, deffects):
             spin = spins[i][j]
             pinning = deffects[i][j]
 
-            if (pinning[0] == 0):
-                print('pinning', pinning[0])
+            if (pinning[0] == 1):
                 spin = [0,0,0]
             
             magx = spin[0]
@@ -179,15 +203,15 @@ def kick(lattice, T):
 
     return lattice
 
-def writeSpinLattice(spins):
-    spinsLattice = np.zeros((params.Nx,params.Ny,3), np.float64)
+def writeSpinLattice(spins, path, formatWith):
+    spinsLattice = np.zeros((params.Nx,params.Ny,3), formatWith)
     aux = 0
     
     for x in range(params.Nx - 1, -1, -1):
         spinsLattice[aux] = spins[x]
         aux = aux + 1
     
-    np.savetxt("output/spins.in", spinsLattice.reshape((params.spinsNumber, 3 * params.spinsNumber)), fmt="%s", delimiter='\t')
+    np.savetxt(path, spinsLattice.reshape((params.spinsNumber, 3 * params.spinsNumber)), fmt="%s", delimiter='\t')
 
 def readSpinLattice(path):
     spins = pd.read_table(path, header=None)
