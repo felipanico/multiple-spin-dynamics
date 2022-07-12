@@ -133,7 +133,7 @@ x=xT.T
 y=yT.T
 r=np.sqrt(x*x+y*y)+1.e-5
 
-r0=3.
+r0=3
 def prof(r):
 	return (r/r0)*np.exp(-(r-r0)/r0)
 
@@ -146,6 +146,10 @@ def iniSkyrmion():
     magphys[inds[0],inds[1],2] = -magphys[inds[0],inds[1],2]
 
     return magphys
+
+#@todo: fix this, because is not a ferromagnetic
+def iniFerromagnetic():
+    return np.zeros((params.Nx, params.Ny,3), np.float64)
 
 def iniVortex(spins):
     coords = np.linspace(-1, 1, 11)

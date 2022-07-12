@@ -11,6 +11,7 @@ n = params.n
 h = params.h
 Nx = params.Nx
 Ny = params.Ny
+stepFileName = params.initialStep
 
 np.random.seed(0)
 
@@ -21,12 +22,18 @@ else:
 
 if (params.random):
     spins = lattice.createSpinLattice()
+elif (params.createSkyrmion): 
+    spins = np.copy(lattice.iniSkyrmion())
 else:
     spins = lattice.readSpinLattice(params.inputFile)
 
-if (params.createSkyrmion): spins = np.copy(lattice.iniSkyrmion())
+if (params.createSkyrmion): 
+    spins = np.copy(lattice.iniSkyrmion())
 
 spins = np.copy(lattice.normalization(spins, deffects))
+
+if (params.createFerromagnetic): 
+    spins = np.copy(lattice.iniFerromagnetic())
 
 if (params.minimize):
     #Monte Carlo
@@ -38,8 +45,9 @@ else:
         spins = np.copy(calc.llgEvolve(spins, finalSpins))
         spins = np.copy(lattice.normalization(spins, deffects))
         if (step % params.outputInterval == 0 and step > 0):    
-            print('LLG step:', step)        
-            plot.spins2DT(spins, step)
+            stepFileName = stepFileName + step
+            print('LLG step:', stepFileName)        
+            plot.spins2DT(spins, stepFileName)
 
 if (params.saveLattice): 
     print("Saving Lattice...")

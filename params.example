@@ -27,6 +27,7 @@ inputFile = 'data/input.dat'
 deffects = False
 readDeffects = False
 createSkyrmion = False
+createFerromagnetic = False
 
 integrationMethod = "euler"
 saveLattice = False
