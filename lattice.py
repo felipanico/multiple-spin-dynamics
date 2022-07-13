@@ -46,53 +46,54 @@ def chooseDeffects():
     if (params.deffects != False):
         spins = readDeffects(params.deffects)
     else:
-        spins = createDeffects()
+        spins = createDeffectsAsArray()
     
     return spins 
 
-def createDeffects():
-    #@todo: fix
-    #if (params.deffects == False):
-    #    return np.ones((params.Nx,params.Ny,3))
+def createDeffectsAsArray():
+    if (params.deffects == False):
+        return np.ones((params.Nx,params.Ny,3), np.float64)
+    
+    spinLattice = np.zeros((params.Nx,params.Ny,3), np.float64)
+    
+    for i in range(params.Nx):
+        for j in range(params.Ny):
+            
+            spin = [1, 1, 1]    
+            
+            if (np.random.uniform(-1, 50) < 0 ):
+                spin = [0,0,0]
+           
+
+            spinLattice[i][j] = spin
+
+    return spinLattice
+
+def createDeffectsAsFile():
+    if (params.pinningDensity == 0):
+        return np.ones((params.Nx,params.Ny,3))
     
     spinLattice = np.zeros((params.Nx,params.Ny), np.int0)
-    
-    totalPinning = 300
-    size = 1600
+    totalPinnings = round(params.pinningDensity * params.spinsTotal/100);
     pinnings = 0;
-    aux = 0;
-
     
-    while(pinnings < totalPinning):
+    print("Number of pinnings: ", totalPinnings)
+    
+    while(pinnings < totalPinnings):
         if (np.random.uniform(1, 10) < 5 ):
             irand = np.random.randint(1,40)
             jrand = np.random.randint(1,40)
             spinLattice[irand][jrand] = 1
             pinnings = pinnings + 1
 
-    np.savetxt("output/vac.in", spinLattice.reshape((params.spinsNumber, params.spinsNumber)), fmt="%s", delimiter='\t')
-    sys.exit()
-
-    for i in range(params.Nx):
-        for j in range(params.Ny):
-            aux = aux + 1
-            spin = 0    
-            
-            if (np.random.uniform(1, 2 * size) < size ):
-                spin = 1
-                pinnings = pinnings + 1
-                
-                if (pinnings >= totalPinning): break;
-        
-
-            spinLattice[i][j] = spin
-        
-        if (pinnings >= totalPinning): break;
+    np.savetxt(
+        "output/vac_" + str(totalPinnings) + ".in", 
+        spinLattice.reshape((params.spinsNumber, params.spinsNumber)), 
+        fmt="%s", 
+        delimiter='\t'
+    )
     
-    #print(spinLattice)
-    #sys.exit()
-    
-    return spinLattice
+    return 1
 
 def createPBC(i, j):
     x1 = i - 1

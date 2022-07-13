@@ -32,3 +32,5 @@ createFerromagnetic = False
 integrationMethod = "euler"
 saveLattice = False
 
+pinningDensity = 0
+

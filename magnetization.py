@@ -15,6 +15,10 @@ stepFileName = params.initialStep
 
 #np.random.seed(0)
 
+if (params.pinningDensity > 0): 
+    lattice.createDeffectsAsFile()
+    sys.exit()
+
 if (params.useDeffects):
     deffects = lattice.chooseDeffects()
 else:
