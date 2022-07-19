@@ -114,8 +114,7 @@ def normalization(spins, deffects):
             spin = spins[i][j]
             pinning = deffects[i][j]
 
-            if (pinning[0] == 1):
-                spin = [0,0,0]
+            if (pinning[0] == 1): spin = [0,0,0]
             
             magx = spin[0]
             magy = spin[1]

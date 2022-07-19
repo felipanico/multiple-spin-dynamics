@@ -22,7 +22,7 @@ if (params.pinningDensity > 0):
 if (params.useDeffects):
     deffects = lattice.chooseDeffects()
 else:
-    deffects = np.ones((params.Nx,params.Ny,3), np.float64)
+    deffects = np.zeros((params.Nx,params.Ny,3), np.float64)
 
 if (params.random):
     spins = lattice.createSpinLattice()
@@ -30,9 +30,6 @@ elif (params.createSkyrmion):
     spins = np.copy(lattice.iniSkyrmion())
 else:
     spins = lattice.readSpinLattice(params.inputFile)
-
-if (params.createSkyrmion): 
-    spins = np.copy(lattice.iniSkyrmion())
 
 spins = np.copy(lattice.normalization(spins, deffects))
 
