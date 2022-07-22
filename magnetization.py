@@ -27,7 +27,7 @@ else:
 if (params.random):
     spins = lattice.createSpinLattice()
 elif (params.createSkyrmion): 
-    spins = np.copy(lattice.iniSkyrmion())
+    spins = np.copy(lattice.iniSkyrmionMumax())
 else:
     spins = lattice.readSpinLattice(params.inputFile)
 
