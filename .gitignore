@@ -2,6 +2,7 @@ env/
 .vscode/
 __pycache__/
 params.py
+output/
 spins/
 pinnings/
 nohup.out
