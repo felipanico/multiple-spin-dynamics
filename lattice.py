@@ -1,10 +1,11 @@
+from venv import create
 import numpy as np
-import sys
 import random
 import params
 import pandas as pd
 import math
 from random import random
+import matplotlib.pyplot as plt
 
 def createSpinPositions():
     positions = np.zeros([params.spinsTotal, 3])
@@ -39,7 +40,25 @@ def createSpinLattice():
 
     return spinLattice
 
-def createDeffects():
+
+def chooseDeffects():
+    if (params.deffects != False):
+        spins = readDeffects(params.deffects)
+    else:
+        spins = createDeffectsAsArray()
+    
+    return spins
+
+def chooseInitialState():
+    if (params.createFerromagnetic): 
+        return np.copy(iniFerromagnetic())
+    
+    if (params.createSkyrmion): 
+        return np.copy(iniSkyrmionMumax())
+    
+    return readSpinLattice(params.inputFile)
+
+def createDeffectsAsArray():
     if (params.deffects == False):
         return np.ones((params.Nx,params.Ny,3), np.float64)
     
@@ -57,6 +76,32 @@ def createDeffects():
             spinLattice[i][j] = spin
 
     return spinLattice
+
+def createDeffectsAsFile():
+    if (params.pinningDensity == 0):
+        return np.ones((params.Nx,params.Ny,3))
+    
+    spinLattice = np.zeros((params.Nx,params.Ny), np.int0)
+    totalPinnings = round(params.pinningDensity * params.spinsTotal/100);
+    pinnings = 0;
+    
+    print("Number of pinnings: ", totalPinnings)
+    
+    while(pinnings < totalPinnings):
+        if (np.random.uniform(1, 10) < 5 ):
+            irand = np.random.randint(1,40)
+            jrand = np.random.randint(1,40)
+            spinLattice[irand][jrand] = 1
+            pinnings = pinnings + 1
+
+    np.savetxt(
+        "output/vac_" + str(totalPinnings) + ".in", 
+        spinLattice.reshape((params.spinsNumber, params.spinsNumber)), 
+        fmt="%s", 
+        delimiter='\t'
+    )
+    
+    return 1
 
 def createPBC(i, j):
     x1 = i - 1
@@ -77,8 +122,7 @@ def normalization(spins, deffects):
             spin = spins[i][j]
             pinning = deffects[i][j]
 
-            if (pinning[0] == 0):
-                spin = [0,0,0]
+            if (pinning[0] == 1): spin = [0,0,0]
             
             magx = spin[0]
             magy = spin[1]
@@ -107,6 +151,76 @@ def iniRand(magphys):
             magphys[i][j] = spin
     return magphys
 
+def iniUniform():
+    spins = np.ones((params.Nx,params.Ny,3), np.float64)
+    return spins
+
+
+#skyrmion
+i0=int(params.Nx/2)
+j0=int(params.Ny/2)
+irange = np.arange(params.Nx)
+jrange = np.arange(params.Ny)
+r0 = 5 #radius
+
+def prof(r):
+    return (r/r0)*np.exp(-(r-r0)/r0)
+
+def iniSkyrmionMicroLLG():
+    xT, yT = np.meshgrid(irange-i0, jrange-j0)
+    x=xT.T
+    y=yT.T
+    r=np.sqrt(x*x+y*y)+1.e-5
+    
+    magphys = np.ones((params.Nx,params.Ny,3), np.float64)
+    magphys[:,:,0] = -prof(r)*x/r
+    magphys[:,:,1] = prof(r)*y/r
+    magphys[:,:,2] = np.sqrt(1.-magphys[:,:,0]*magphys[:,:,0]-magphys[:,:,1]*magphys[:,:,1])
+    inds=np.where(r<r0)
+    magphys[inds[0],inds[1],2] = -magphys[inds[0],inds[1],2]
+
+    return magphys
+
+def iniSkyrmionMumax():
+    i0=int(params.Nx/2)
+    j0=int(params.Ny/2)
+    irange = np.arange(params.Nx)
+    jrange = np.arange(params.Ny)
+
+    x, y = np.meshgrid(irange-i0, jrange-j0)
+    r=np.sqrt(x*x+y*y)+1.e-5
+    
+    p = -1 #polarization
+    q = 1 #charge
+    r2 = r * r
+    
+    magphys = np.ones((params.Nx,params.Ny,3), np.float64)
+    
+    magphys[:,:,2] =  2.0 *p * (np.exp(-r2 / (r0 * r0)) - 0.5)
+
+    inds=np.where(r>0)
+    magphys[inds[0],inds[1],1] = x[inds[0],inds[1]] * q / r[inds[0],inds[1]] * (1.0 - np.abs(magphys[inds[0],inds[1],2]))
+    magphys[inds[0],inds[1],0] = -y[inds[0],inds[1]] * q / r[inds[0],inds[1]] * (1.0 - np.abs(magphys[inds[0],inds[1],2]))
+    
+    return magphys
+
+## end skyrmion
+
+#@todo: fix this, because is not a ferromagnetic
+def iniFerromagnetic():
+    return np.zeros((params.Nx, params.Ny,3), np.float64)
+
+def iniVortex(spins):
+    coords = np.linspace(-1, 1, 11)
+    X, Y = np.meshgrid(coords, coords)
+    Vx, Vy = Y, -X
+    plt.figure()
+    plt.quiver(X, Y, Vx, Vy, pivot='mid')
+    plt.axis('square')
+    plt.show()
+
+    return spins
+
 def kick(lattice, T):
     for i in range(params.Nx):
         for j in range(params.Ny):
@@ -123,6 +237,16 @@ def kick(lattice, T):
             lattice[i,j][2] = magz / np.sqrt(magx**2.0 + magy**2.0 + magz**2.0)
 
     return lattice
+
+def writeSpinLattice(spins, path, formatWith):
+    spinsLattice = np.zeros((params.Nx,params.Ny,3), formatWith)
+    aux = 0
+    
+    for x in range(params.Nx - 1, -1, -1):
+        spinsLattice[aux] = spins[x]
+        aux = aux + 1
+    
+    np.savetxt(path, spinsLattice.reshape((params.spinsNumber, 3 * params.spinsNumber)), fmt="%s", delimiter='\t')
 
 def readSpinLattice(path):
     spins = pd.read_table(path, header=None)

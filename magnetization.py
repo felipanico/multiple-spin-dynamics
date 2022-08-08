@@ -4,33 +4,25 @@ import lattice
 import calc
 import params
 import monte_carlo
-import sys
 
 # Parameters
 n = params.n
 h = params.h
 Nx = params.Nx
 Ny = params.Ny
+stepFileName = params.initialStep
 
-np.random.seed(0)
+if (params.randomSeed == True): np.random.seed(0)
 
-""" @TODO
-  1. save lattice
-  2. create skyrmion
-  3. calc velocity
-  4. create hole
-"""
-
-if (params.readDeffects):
-    deffects = lattice.readDeffects(params.deffects)
+if (params.useDeffects):
+    deffects = lattice.chooseDeffects()
 else:
-    deffects = lattice.createDeffects()
-
+    deffects = np.zeros((params.Nx,params.Ny,3), np.float64)
 
 if (params.random):
     spins = lattice.createSpinLattice()
 else:
-    spins = lattice.readSpinLattice(params.inputFile)
+    spins = lattice.chooseInitialState()
 
 spins = np.copy(lattice.normalization(spins, deffects))
 
@@ -43,8 +35,17 @@ else:
     for step in range(n + 1):
         spins = np.copy(calc.llgEvolve(spins, finalSpins))
         spins = np.copy(lattice.normalization(spins, deffects))
-        ####CÁLCULO DA VELOCIDADE#####
-        
         if (step % params.outputInterval == 0 and step > 0):    
-            print('LLG step:', step)        
-            plot.spins2DT(spins, step)
+            stepFileName = stepFileName + step
+            print('LLG step:', stepFileName)        
+            plot.spins2DT(spins, stepFileName)
+
+if (params.saveLattice): 
+    print("Saving Lattice...")
+    lattice.writeSpinLattice(spins, "output/spins.in", np.float64)
+
+if (params.saveDeffects): 
+    print("Saving Deffects...")
+    lattice.writeSpinLattice(deffects, "output/vac.in", np.int0)
+
+print("End of execution")
