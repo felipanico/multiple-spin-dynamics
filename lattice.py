@@ -1,6 +1,5 @@
 from venv import create
 import numpy as np
-import sys
 import random
 import params
 import pandas as pd
@@ -48,7 +47,16 @@ def chooseDeffects():
     else:
         spins = createDeffectsAsArray()
     
-    return spins 
+    return spins
+
+def chooseInitialState():
+    if (params.createFerromagnetic): 
+        return np.copy(iniFerromagnetic())
+    
+    if (params.createSkyrmion): 
+        return np.copy(iniSkyrmionMumax())
+    
+    return readSpinLattice(params.inputFile)
 
 def createDeffectsAsArray():
     if (params.deffects == False):

@@ -4,7 +4,6 @@ import lattice
 import calc
 import params
 import monte_carlo
-import sys
 
 # Parameters
 n = params.n
@@ -13,11 +12,7 @@ Nx = params.Nx
 Ny = params.Ny
 stepFileName = params.initialStep
 
-#np.random.seed(0)
-
-if (params.pinningDensity > 0): 
-    lattice.createDeffectsAsFile()
-    sys.exit()
+if (params.randomSeed == True): np.random.seed(0)
 
 if (params.useDeffects):
     deffects = lattice.chooseDeffects()
@@ -26,15 +21,10 @@ else:
 
 if (params.random):
     spins = lattice.createSpinLattice()
-elif (params.createSkyrmion): 
-    spins = np.copy(lattice.iniSkyrmionMumax())
 else:
-    spins = lattice.readSpinLattice(params.inputFile)
+    spins = lattice.chooseInitialState()
 
 spins = np.copy(lattice.normalization(spins, deffects))
-
-if (params.createFerromagnetic): 
-    spins = np.copy(lattice.iniFerromagnetic())
 
 if (params.minimize):
     #Monte Carlo

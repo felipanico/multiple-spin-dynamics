@@ -34,3 +34,5 @@ saveLattice = False
 
 pinningDensity = 0
 
+randomSeed = False
+
