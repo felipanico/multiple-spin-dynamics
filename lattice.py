@@ -6,6 +6,7 @@ import pandas as pd
 import math
 from random import random
 import matplotlib.pyplot as plt
+import sys
 
 def createSpinPositions():
     positions = np.zeros([params.spinsTotal, 3])
@@ -89,10 +90,11 @@ def createDeffectsAsFile():
     
     while(pinnings < totalPinnings):
         if (np.random.uniform(1, 10) < 5 ):
-            irand = np.random.randint(1,40)
-            jrand = np.random.randint(1,40)
-            spinLattice[irand][jrand] = 1
-            pinnings = pinnings + 1
+            irand = np.random.randint(1, params.Nx)
+            jrand = np.random.randint(1, params.Ny)
+            if (spinLattice[irand][jrand] != 1):    
+                spinLattice[irand][jrand] = 1
+                pinnings = pinnings + 1
 
     np.savetxt(
         "output/vac_" + str(totalPinnings) + ".in", 
